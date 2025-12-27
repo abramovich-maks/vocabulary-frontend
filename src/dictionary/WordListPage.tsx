@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {deleteWord, getAllWords, updateWord} from "./dictionaryApi";
+import {deleteWord, getAllWords, getDetailsWord, updateWord} from "./dictionaryApi";
 import type {WordDto} from "./dictionaryTypes";
 import {useAuth} from "../auth/AuthContext";
 import AddWordForm from "./AddWordForm";
@@ -7,7 +7,7 @@ import AddWordForm from "./AddWordForm";
 export default function WordListPage() {
     const [words, setWords] = useState<WordDto[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const {logout} = useAuth();
+    const {logout, isAuthenticated} = useAuth();
     const [loadingId, setLoadingId] = useState<number | null>(null);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editWord, setEditWord] = useState("");
@@ -33,8 +33,10 @@ export default function WordListPage() {
     };
 
     useEffect(() => {
-        loadWords();
-    }, []);
+        if (isAuthenticated) {
+            loadWords();
+        }
+    }, [isAuthenticated]);
 
     const startEdit = (word: WordDto) => {
         setEditingId(word.id);
@@ -61,6 +63,16 @@ export default function WordListPage() {
             setError("Failed to update word");
         } finally {
             setLoadingId(null);
+        }
+    };
+
+    const handleDetails = async (id: number) => {
+        try {
+            const res = await getDetailsWord(id);
+            console.log("DETAILS:", res.data);
+            // todo later there will be a link to the WordDetailsPage
+        } catch {
+            setError("Failed to load word details");
         }
     };
 
@@ -95,6 +107,10 @@ export default function WordListPage() {
                         ) : (
                             <>
                                 <strong>{word.word}</strong> — {word.translate}
+
+                                <button onClick={() => handleDetails(word.id)}>
+                                    Details
+                                </button>
 
                                 <button onClick={() => startEdit(word)}>
                                     Edit

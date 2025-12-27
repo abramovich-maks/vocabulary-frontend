@@ -13,8 +13,8 @@ export default function LoginPage() {
         setError(null);
 
         try {
-            await login({email, password});
-            loginSuccess();
+            const res = await login({ email, password });
+            loginSuccess(res.data.token);
         } catch {
             setError("Invalid credentials");
         }
