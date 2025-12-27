@@ -2,18 +2,21 @@ import {useEffect, useState} from "react";
 import {getAllWords} from "./dictionaryApi";
 import type {WordDto} from "./dictionaryTypes";
 import {useAuth} from "../auth/AuthContext";
+import AddWordForm from "./AddWordForm";
 
 export default function WordListPage() {
     const [words, setWords] = useState<WordDto[]>([]);
     const [error, setError] = useState<string | null>(null);
     const {logout} = useAuth();
 
-    useEffect(() => {
+    const loadWords = () => {
         getAllWords()
-            .then(res => {
-                setWords(res.data.dtoResponse);
-            })
+            .then((res) => setWords(res.data.dtoResponse))
             .catch(() => setError("Failed to load words"));
+    };
+
+    useEffect(() => {
+        loadWords();
     }, []);
 
     if (error) return <p>{error}</p>;
@@ -22,7 +25,7 @@ export default function WordListPage() {
         <div>
             <button onClick={logout}>Logout</button>
             <h2>My Dictionary</h2>
-
+            <AddWordForm onWordAdded={loadWords} />
             {words.length === 0 && <p>No words yet</p>}
 
             <ul>
