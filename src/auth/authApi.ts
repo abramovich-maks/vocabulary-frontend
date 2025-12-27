@@ -8,3 +8,7 @@ export interface LoginRequest {
 export const login = (data: LoginRequest) => {
     return apiClient.post("/token", data);
 };
+
+export const checkAuth = () => {
+    return apiClient.get<{ loggedIn: boolean }>("/status");
+};

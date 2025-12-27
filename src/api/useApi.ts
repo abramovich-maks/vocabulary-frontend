@@ -7,3 +7,8 @@ export const apiClient = axios.create({
         "Content-Type": "application/json",
     },
 });
+
+export const checkAuth = () => {
+    return apiClient.get("/status");
+};
+
