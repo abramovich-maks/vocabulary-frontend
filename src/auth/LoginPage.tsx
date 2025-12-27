@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { login } from "./authApi";
+import {useState} from "react";
+import {login} from "./authApi";
+import {useAuth} from "./AuthContext";
 
 export default function LoginPage() {
+    const {loginSuccess} = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
@@ -11,40 +13,35 @@ export default function LoginPage() {
         setError(null);
 
         try {
-            await login({ email, password });
-            console.log("LOGIN OK");
-        } catch (err: any) {
+            await login({email, password});
+            loginSuccess();
+        } catch {
             setError("Invalid credentials");
-            console.error(err);
         }
     };
 
     return (
-        <div style={{ maxWidth: 400, margin: "100px auto" }}>
+        <div style={{maxWidth: 400, margin: "100px auto"}}>
             <h2>Login</h2>
 
             <form onSubmit={handleSubmit}>
-                <div>
-                    <input
-                        type="email"
-                        placeholder="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </div>
+                <input
+                    type="email"
+                    placeholder="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
 
-                <div>
-                    <input
-                        type="password"
-                        placeholder="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
+                <input
+                    type="password"
+                    placeholder="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
 
                 <button type="submit">Login</button>
 
-                {error && <p style={{ color: "red" }}>{error}</p>}
+                {error && <p style={{color: "red"}}>{error}</p>}
             </form>
         </div>
     );
