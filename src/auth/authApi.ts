@@ -1,4 +1,4 @@
-import { apiClient } from "../api/useApi";
+import {apiClient} from "../api/useApi";
 
 export interface LoginRequest {
     email: string;
@@ -11,4 +11,8 @@ export const login = (data: LoginRequest) => {
 
 export const checkAuth = () => {
     return apiClient.get<{ loggedIn: boolean }>("/status");
+};
+
+export const logout = () => {
+    return apiClient.post("/logout");
 };

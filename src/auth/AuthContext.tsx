@@ -1,10 +1,11 @@
 import {createContext, useContext, useEffect, useState} from "react";
-import {checkAuth} from "./authApi";
+import {checkAuth, logout as logoutApi} from "./authApi";
 
 interface AuthContextValue {
     isAuthenticated: boolean;
     loginSuccess: () => void;
     checkingAuth: boolean;
+    logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -15,6 +16,13 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
 
     const loginSuccess = () => setIsAuthenticated(true);
 
+    const logout = () => {
+        logoutApi()
+            .finally(() => {
+                setIsAuthenticated(false);
+            });
+    };
+
     useEffect(() => {
         checkAuth()
             .then(res => setIsAuthenticated(res.data.loggedIn === true))
@@ -23,7 +31,7 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
     }, []);
 
     return (
-        <AuthContext.Provider value={{isAuthenticated, loginSuccess, checkingAuth}}>
+        <AuthContext.Provider value={{isAuthenticated, loginSuccess, checkingAuth, logout}}>
             {children}
         </AuthContext.Provider>
     );
