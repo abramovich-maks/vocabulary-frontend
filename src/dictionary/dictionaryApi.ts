@@ -13,3 +13,7 @@ export const getAllWords = () => {
 export const addWord = (data: AddWordRequest) => {
     return apiClient.post<WordDto>("/words", data);
 };
+
+export const deleteWord = (id: number) => {
+    return apiClient.delete(`/words/${id}`);
+};
