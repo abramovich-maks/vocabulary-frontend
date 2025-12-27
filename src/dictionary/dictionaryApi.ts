@@ -17,3 +17,7 @@ export const addWord = (data: AddWordRequest) => {
 export const deleteWord = (id: number) => {
     return apiClient.delete(`/words/${id}`);
 };
+
+export const updateWord = (id: number, data: UpdateWordRequest) => {
+    return apiClient.patch(`/words/${id}`, data);
+};
