@@ -1,5 +1,5 @@
 import axios from "axios";
-import { authStore } from "../auth/authStore";
+import {authStore} from "../auth/authStore";
 
 export const apiClient = axios.create({
     baseURL: "/api",
@@ -35,7 +35,8 @@ apiClient.interceptors.response.use(
 
                 return apiClient.request(originalRequest);
             } catch {
-                authStore.setAccessToken(null);
+                authStore.clear();
+                return Promise.reject(error);
             }
         }
 

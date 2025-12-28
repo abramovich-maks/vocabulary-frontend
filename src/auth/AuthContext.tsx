@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from "react";
-import { logout as logoutApi } from "./authApi";
-import { authStore } from "./authStore";
+import {createContext, useContext, useState, useEffect} from "react";
+import {logout as logoutApi} from "./authApi";
+import {authStore} from "./authStore";
 
 interface AuthContextValue {
     isAuthenticated: boolean;
@@ -10,18 +10,22 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+export function AuthProvider({children}: { children: React.ReactNode }) {
+    const [isAuthenticated, setIsAuthenticated] = useState(authStore.isAuthenticated());
+
+    useEffect(() => {
+        return authStore.subscribe(() => {
+            setIsAuthenticated(authStore.isAuthenticated());
+        });
+    }, []);
 
     const loginSuccess = (token: string) => {
         authStore.setAccessToken(token);
-        setIsAuthenticated(true);
     };
 
     const logout = () => {
         logoutApi().finally(() => {
-            authStore.setAccessToken(null);
-            setIsAuthenticated(false);
+            authStore.clear();
         });
     };
 
