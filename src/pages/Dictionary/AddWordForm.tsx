@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { addWord } from "./dictionaryApi";
+import {useState} from "react";
+import {addWord} from "../../composables/dictionaryApi";
+import axios from "axios";
 
 interface Props {
     onWordAdded: () => void;
 }
 
-export default function AddWordForm({ onWordAdded }: Props) {
+export default function AddWordForm({onWordAdded}: Props) {
     const [word, setWord] = useState("");
     const [translate, setTranslate] = useState("");
     const [error, setError] = useState<string | null>(null);
@@ -22,19 +23,24 @@ export default function AddWordForm({ onWordAdded }: Props) {
 
         try {
             setLoading(true);
-            await addWord({ word, translate });
+            await addWord({word, translate});
             setWord("");
             setTranslate("");
             onWordAdded();
-        } catch {
-            setError("Failed to add word");
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                const message = err.response?.data?.message ?? "Failed to add word";
+                setError(message);
+            } else {
+                setError("Unexpected error");
+            }
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
+        <form onSubmit={handleSubmit} style={{marginBottom: 20}}>
             <h3>Add new word</h3>
 
             <input
@@ -55,7 +61,7 @@ export default function AddWordForm({ onWordAdded }: Props) {
                 {loading ? "Adding..." : "Add"}
             </button>
 
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && <p style={{color: "red"}}>{error}</p>}
         </form>
     );
 }

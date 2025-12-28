@@ -1,8 +1,11 @@
 import {useEffect, useState} from "react";
-import {deleteWord, getAllWords, getDetailsWord, updateWord} from "./dictionaryApi";
-import type {WordDto} from "./dictionaryTypes";
-import {useAuth} from "../auth/AuthContext";
+import {deleteWord, getAllWords, getDetailsWord, updateWord} from "../../composables/dictionaryApi";
+import {useAuth} from "../../composables/AuthContext";
 import AddWordForm from "./AddWordForm";
+
+import type {
+    WordDto
+} from '../../models/models';
 
 export default function WordListPage() {
     const [words, setWords] = useState<WordDto[]>([]);

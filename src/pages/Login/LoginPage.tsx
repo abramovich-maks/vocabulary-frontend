@@ -1,9 +1,12 @@
 import {useState} from "react";
-import {login} from "./authApi";
-import {useAuth} from "./AuthContext";
+import {login} from "../../composables/authApi";
+import {useAuth} from "../../composables/AuthContext";
+import {useNavigate} from "react-router-dom";
 
 export default function LoginPage() {
     const {loginSuccess} = useAuth();
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
@@ -13,8 +16,9 @@ export default function LoginPage() {
         setError(null);
 
         try {
-            const res = await login({ email, password });
+            const res = await login({email, password});
             loginSuccess(res.data.token);
+            navigate("/");
         } catch {
             setError("Invalid credentials");
         }

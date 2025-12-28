@@ -1,5 +1,11 @@
-import { apiClient } from "../api/useApi";
-import type {GetAllWordsResponse, WordDto, UpdateWordRequest} from "./dictionaryTypes";
+import {apiClient} from "../composables/useClient";
+
+import type {
+    GetAllWordsResponse,
+    WordDto,
+    UpdateWordRequest,
+    AddWordRequest
+} from '../models/models';
 
 export const getAllWords = () => {
     return apiClient.get<GetAllWordsResponse>("/words");

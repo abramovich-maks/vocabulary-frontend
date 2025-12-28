@@ -1,19 +1,37 @@
-import LoginPage from "./auth/LoginPage";
-import {useAuth} from "./auth/AuthContext";
-import WordListPage from "./dictionary/WordListPage";
+import {Route, Routes} from "react-router-dom";
+import {useAuth} from "./composables/AuthContext";
+
+import HomePage from "./pages/Home/HomePage";
+import LoginPage from "./pages/Login/LoginPage";
+import RegisterPage from "./pages/Register/RegisterPage";
+import WordListPage from "./pages/Dictionary/WordListPage";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
-    const {isAuthenticated, checkingAuth} = useAuth();
+    const {checkingAuth} = useAuth();
 
     if (checkingAuth) {
         return <p>Loading...</p>;
     }
 
-    if (!isAuthenticated) {
-        return <LoginPage/>;
-    }
+    return (
+        <Routes>
+            <Route path="/" element={<HomePage/>}/>
+            <Route path="/login" element={<LoginPage/>}/>
+            <Route path="/register" element={<RegisterPage/>}/>
 
-    return <WordListPage/>;
+            <Route
+                path="/words"
+                element={
+                    <PrivateRoute>
+                        <WordListPage/>
+                    </PrivateRoute>
+                }
+            />
+
+            <Route path="*" element={<div>404</div>}/>
+        </Routes>
+    );
 }
 
 export default App;

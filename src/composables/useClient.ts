@@ -1,5 +1,5 @@
 import axios from "axios";
-import {authStore} from "../auth/authStore";
+import {authStore} from "../composables/authStore";
 
 export const apiClient = axios.create({
     baseURL: "/api",
