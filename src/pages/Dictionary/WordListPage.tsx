@@ -15,6 +15,7 @@ export default function WordListPage() {
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editWord, setEditWord] = useState("");
     const [editTranslate, setEditTranslate] = useState("");
+    const [selectedDetails, setSelectedDetails] = useState<WordDetails | null>(null);
 
 
     const loadWords = () => {
@@ -72,8 +73,7 @@ export default function WordListPage() {
     const handleDetails = async (id: number) => {
         try {
             const res = await getDetailsWord(id);
-            console.log("DETAILS:", res.data);
-            // todo later there will be a link to the WordDetailsPage
+            setSelectedDetails(res.data);
         } catch {
             setError("Failed to load word details");
         }
@@ -87,7 +87,22 @@ export default function WordListPage() {
             <h2>My Dictionary</h2>
             <AddWordForm onWordAdded={loadWords}/>
             {words.length === 0 && <p>No words yet</p>}
-
+            {selectedDetails && (
+                <div style={{border: "1px solid #ccc", padding: "10px", marginTop: "20px"}}>
+                    <h3>{selectedDetails.word}</h3>
+                    {selectedDetails.phonetic && (
+                        <p><strong>Phonetic:</strong> {selectedDetails.phonetic}</p>
+                    )}
+                    {selectedDetails.audioUrl && (
+                        <audio controls src={selectedDetails.audioUrl}/>
+                    )}
+                    <p><strong>Definition:</strong> {selectedDetails.definition}</p>
+                    {selectedDetails.example && (
+                        <p><strong>Example:</strong> {selectedDetails.example}</p>
+                    )}
+                    <button onClick={() => setSelectedDetails(null)}>Close</button>
+                </div>
+            )}
             <ul>
                 {words.map(word => (
                     <li key={word.id}>

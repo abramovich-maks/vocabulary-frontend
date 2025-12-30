@@ -4,7 +4,8 @@ import type {
     GetAllWordsResponse,
     WordDto,
     UpdateWordRequest,
-    AddWordRequest
+    AddWordRequest,
+    WordDetails
 } from '../models/models';
 
 export const getAllWords = () => {
@@ -24,5 +25,5 @@ export const updateWord = (id: number, data: UpdateWordRequest) => {
 };
 
 export const getDetailsWord = (id: number) => {
-    return apiClient.get<WordDto>(`/words/${id}`);
+    return apiClient.get<WordDetails>(`/words/${id}/details`);
 };
