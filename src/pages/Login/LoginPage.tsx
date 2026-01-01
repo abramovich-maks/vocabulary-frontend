@@ -2,6 +2,8 @@ import {useState} from "react";
 import {login} from "../../composables/authApi";
 import {useAuth} from "../../composables/AuthContext";
 import {useNavigate} from "react-router-dom";
+import {Card} from '../../components/Card';
+import {Button, ButtonsContainer, Container, ErrorText, Form, Input} from './LoginPage.styles';
 
 export default function LoginPage() {
     const {loginSuccess} = useAuth();
@@ -25,28 +27,31 @@ export default function LoginPage() {
     };
 
     return (
-        <div style={{maxWidth: 400, margin: "100px auto"}}>
-            <h2>Login</h2>
+        <Card>
+            <Container>
+                <h2>Login</h2>
 
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="email"
-                    placeholder="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
+                <Form onSubmit={handleSubmit}>
+                    <Input
+                        type="email"
+                        placeholder="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
 
-                <input
-                    type="password"
-                    placeholder="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                    <Input
+                        type="password"
+                        placeholder="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <ButtonsContainer>
+                        <Button type="submit">Login</Button>
+                    </ButtonsContainer>
 
-                <button type="submit">Login</button>
-
-                {error && <p style={{color: "red"}}>{error}</p>}
-            </form>
-        </div>
+                    {error && <ErrorText>{error}</ErrorText>}
+                </Form>
+            </Container>
+        </Card>
     );
 }
