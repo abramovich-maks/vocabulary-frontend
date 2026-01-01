@@ -27,6 +27,9 @@ export default function HomePage() {
                     <Link to="/words">
                         <button>Go to my words</button>
                     </Link>
+                    <Link to="/daily-test">
+                        <button>Daily Test</button>
+                    </Link>
                 </div>
             )}
         </div>

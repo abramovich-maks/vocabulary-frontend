@@ -37,3 +37,38 @@ export interface WordDetails {
     definition: string;
     example: string;
 }
+
+export interface QuestionDto {
+    id: number;
+    wordEntryId: number;
+    prompt: string;
+    direction: "WORD_TO_TRANSLATION" | "TRANSLATION_TO_WORD";
+}
+
+export interface DailyTestShowResponseDto {
+    id: number;
+    taskDate: string;
+    userId: number;
+    questions: QuestionDto[];
+}
+
+export interface UserAnswerRequestDto {
+    questionId: number;
+    answer: string;
+}
+
+export interface AnswerResultDto {
+    questionId: number;
+    wordEntryId: number;
+    userAnswer: string;
+    correctAnswer: string;
+    correct: boolean;
+}
+
+export interface DailyTestControllerResponseDto {
+    userId: number;
+    total: number;
+    correct: number;
+    incorrect: number;
+    answers: AnswerResultDto[];
+}

@@ -5,6 +5,7 @@ import HomePage from "./pages/Home/HomePage";
 import LoginPage from "./pages/Login/LoginPage";
 import RegisterPage from "./pages/Register/RegisterPage";
 import WordListPage from "./pages/Dictionary/WordListPage";
+import DailyTestPage from "./pages/DailyTest/DailyTestPage";
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
@@ -25,6 +26,15 @@ function App() {
                 element={
                     <PrivateRoute>
                         <WordListPage/>
+                    </PrivateRoute>
+                }
+            />
+
+            <Route
+                path="/daily-test"
+                element={
+                    <PrivateRoute>
+                        <DailyTestPage/>
                     </PrivateRoute>
                 }
             />

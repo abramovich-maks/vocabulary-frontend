@@ -3,9 +3,7 @@ import {deleteWord, getAllWords, getDetailsWord, updateWord} from "../../composa
 import {useAuth} from "../../composables/AuthContext";
 import AddWordForm from "./AddWordForm";
 
-import type {
-    WordDto
-} from '../../models/models';
+import type {WordDto} from '../../models/models';
 
 export default function WordListPage() {
     const [words, setWords] = useState<WordDto[]>([]);
@@ -16,6 +14,7 @@ export default function WordListPage() {
     const [editWord, setEditWord] = useState("");
     const [editTranslate, setEditTranslate] = useState("");
     const [selectedDetails, setSelectedDetails] = useState<WordDetails | null>(null);
+    const [detailsState, setDetailsState] = useState<"idle" | "loading" | "empty" | "loaded">("idle");
 
 
     const loadWords = () => {
@@ -72,10 +71,21 @@ export default function WordListPage() {
 
     const handleDetails = async (id: number) => {
         try {
+            setDetailsState("loading");
+
             const res = await getDetailsWord(id);
+
+            if (res.status === 204 || !res.data) {
+                setSelectedDetails(null);
+                setDetailsState("empty");
+                return;
+            }
+
             setSelectedDetails(res.data);
+            setDetailsState("loaded");
         } catch {
-            setError("Failed to load word details");
+            setSelectedDetails(null);
+            setDetailsState("empty");
         }
     };
 
@@ -87,20 +97,47 @@ export default function WordListPage() {
             <h2>My Dictionary</h2>
             <AddWordForm onWordAdded={loadWords}/>
             {words.length === 0 && <p>No words yet</p>}
-            {selectedDetails && (
+            {detailsState !== "idle" && (
                 <div style={{border: "1px solid #ccc", padding: "10px", marginTop: "20px"}}>
-                    <h3>{selectedDetails.word}</h3>
-                    {selectedDetails.phonetic && (
-                        <p><strong>Phonetic:</strong> {selectedDetails.phonetic}</p>
+                    {detailsState === "loading" && (
+                        <p>Loading details...</p>
                     )}
-                    {selectedDetails.audioUrl && (
-                        <audio controls src={selectedDetails.audioUrl}/>
+
+                    {detailsState === "empty" && (
+                        <>
+                            <p>No details available for this word.</p>
+                            <button onClick={() => setDetailsState("idle")}>Close</button>
+                        </>
                     )}
-                    <p><strong>Definition:</strong> {selectedDetails.definition}</p>
-                    {selectedDetails.example && (
-                        <p><strong>Example:</strong> {selectedDetails.example}</p>
+
+                    {detailsState === "loaded" && selectedDetails && (
+                        <>
+                            <h3>{selectedDetails.word}</h3>
+
+                            {selectedDetails.phonetic && (
+                                <p><strong>Phonetic:</strong> {selectedDetails.phonetic}</p>
+                            )}
+
+                            {selectedDetails.audioUrl && (
+                                <audio controls src={selectedDetails.audioUrl}/>
+                            )}
+
+                            <p><strong>Definition:</strong> {selectedDetails.definition}</p>
+
+                            {selectedDetails.example && (
+                                <p><strong>Example:</strong> {selectedDetails.example}</p>
+                            )}
+
+                            <button
+                                onClick={() => {
+                                    setSelectedDetails(null);
+                                    setDetailsState("idle");
+                                }}
+                            >
+                                Close
+                            </button>
+                        </>
                     )}
-                    <button onClick={() => setSelectedDetails(null)}>Close</button>
                 </div>
             )}
             <ul>
