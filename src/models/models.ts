@@ -43,6 +43,7 @@ export interface QuestionDto {
     wordEntryId: number;
     prompt: string;
     direction: "WORD_TO_TRANSLATION" | "TRANSLATION_TO_WORD";
+    answer: string;
 }
 
 export interface DailyTestShowResponseDto {

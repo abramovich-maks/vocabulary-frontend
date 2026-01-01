@@ -22,14 +22,16 @@ export default function DailyTestPage() {
     const [message, setMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
+    const [showFeedback, setShowFeedback] = useState(false);
+    const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+
     useEffect(() => {
         getDailyTest()
             .then(res => {
                 if (!res.data.questions || res.data.questions.length === 0) {
                     setMessage("No daily test available. Please come back tomorrow.");
                 } else {
-                    const shuffled = shuffleArray(res.data.questions);
-                    setQuestions(shuffled);
+                    setQuestions(shuffleArray(res.data.questions));
                 }
             })
             .catch(err => {
@@ -45,19 +47,29 @@ export default function DailyTestPage() {
             .finally(() => setLoading(false));
     }, []);
 
-    const handleNext = () => {
-        const currentQuestion = questions[currentIndex];
-        if (!answers[currentQuestion.id]) return;
-
-        setCurrentIndex(prev => prev + 1);
-    };
-
     const handleChange = (value: string) => {
         const questionId = questions[currentIndex].id;
         setAnswers(prev => ({
             ...prev,
             [questionId]: value,
         }));
+    };
+
+    const handleCheck = () => {
+        const question = questions[currentIndex];
+        const userAnswer = answers[question.id]?.trim().toLowerCase();
+        const correctAnswer = question.answer.trim().toLowerCase();
+
+        const correct = userAnswer === correctAnswer;
+
+        setIsCorrect(correct);
+        setShowFeedback(true);
+    };
+
+    const handleNext = () => {
+        setShowFeedback(false);
+        setIsCorrect(null);
+        setCurrentIndex(prev => prev + 1);
     };
 
     const handleSubmit = async () => {
@@ -119,12 +131,28 @@ export default function DailyTestPage() {
 
             <input
                 type="text"
+                disabled={showFeedback}
                 value={answers[currentQuestion.id] || ""}
                 onChange={e => handleChange(e.target.value)}
             />
 
+            {showFeedback && (
+                <p
+                    style={{
+                        color: isCorrect ? "green" : "red",
+                        fontWeight: "bold",
+                        marginTop: "8px",
+                    }}
+                >
+                    Correct answer: {currentQuestion.answer}
+                    {isCorrect ? " ✅" : " ❌"}
+                </p>
+            )}
+
             <div style={{marginTop: "16px"}}>
-                {!isLast ? (
+                {!showFeedback ? (
+                    <button onClick={handleCheck}>Check</button>
+                ) : !isLast ? (
                     <button onClick={handleNext}>Next</button>
                 ) : (
                     <button onClick={handleSubmit}>Finish</button>
