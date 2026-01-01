@@ -1,6 +1,9 @@
-import { useState } from "react";
-import { register } from "../../composables/authApi";
-import { useNavigate } from "react-router-dom";
+import {useState} from "react";
+import {register} from "../../composables/authApi";
+import {useNavigate} from "react-router-dom";
+import {Card} from "../../components/Card";
+
+import {Button, ButtonsContainer, Container, ErrorText, Form, Input,} from "./RegisterPage.styles";
 
 export default function RegisterPage() {
     const navigate = useNavigate();
@@ -10,10 +13,12 @@ export default function RegisterPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
+    const [submitting, setSubmitting] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
+        setSubmitting(true);
 
         try {
             await register({
@@ -24,48 +29,63 @@ export default function RegisterPage() {
             });
 
             navigate("/login");
-        } catch (err: any) {
+        } catch {
             setError("Registration failed");
+        } finally {
+            setSubmitting(false);
         }
     };
 
+    const isDisabled =
+        submitting ||
+        !username.trim() ||
+        !surname.trim() ||
+        !email.trim() ||
+        !password.trim();
+
     return (
-        <div style={{ maxWidth: 400, margin: "100px auto" }}>
-            <h2>Register</h2>
+        <Card>
+            <Container>
+                <h2>Register</h2>
 
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
+                <Form onSubmit={handleSubmit}>
+                    <Input
+                        type="text"
+                        placeholder="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
 
-                <input
-                    type="text"
-                    placeholder="surname"
-                    value={surname}
-                    onChange={(e) => setSurname(e.target.value)}
-                />
+                    <Input
+                        type="text"
+                        placeholder="surname"
+                        value={surname}
+                        onChange={(e) => setSurname(e.target.value)}
+                    />
 
-                <input
-                    type="email"
-                    placeholder="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
+                    <Input
+                        type="email"
+                        placeholder="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
 
-                <input
-                    type="password"
-                    placeholder="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                    <Input
+                        type="password"
+                        placeholder="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
 
-                <button type="submit">Register</button>
+                    <ButtonsContainer>
+                        <Button type="submit" disabled={isDisabled}>
+                            {submitting ? "Registering..." : "Register"}
+                        </Button>
+                    </ButtonsContainer>
 
-                {error && <p style={{ color: "red" }}>{error}</p>}
-            </form>
-        </div>
+                    {error && <ErrorText>{error}</ErrorText>}
+                </Form>
+            </Container>
+        </Card>
     );
 }
