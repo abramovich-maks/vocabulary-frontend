@@ -5,39 +5,13 @@ export const Container = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 0;
+    margin: 0rem;
+    min-height: 80vh;
     width: 100%;
 
     p {
-        color: ${({ theme }) => theme.textSecondary};
+        color: ${({theme}) => theme.textSecondary};
     }
-`;
-
-export const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 400px;
-`;
-
-export const Input = styled.input`
-    width: 100%;
-    background-color: ${({ theme }) => theme.card};
-    color: ${({ theme }) => theme.textPrimary};
-    border: 1px solid ${({ theme }) => theme.textPrimary};
-    border-radius: 0.5rem;
-    margin: 0.5rem 0;
-    padding: 0.5rem;
-    font-size: 1.2rem;
-    text-align: center;
-    transition: 0.3s;
-
-    ::-webkit-outer-spin-button,
-    ::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-    -moz-appearance: textfield;
 `;
 
 export const ButtonsContainer = styled.div`
@@ -52,8 +26,8 @@ export const Button = styled.button`
     padding: 0.5rem 1rem;
     margin: 0.5rem;
     font-size: 1.2rem;
-    background-color: ${({ theme }) => theme.button};
-    color: ${({ theme }) => theme.textPrimary};
+    background-color: ${({theme}) => theme.button};
+    color: ${({theme}) => theme.buttonText};
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
@@ -67,10 +41,4 @@ export const Button = styled.button`
     &:hover:enabled {
         background-color: ${({ theme }) => theme.buttonHover};
     }
-`;
-
-export const ErrorText = styled.p`
-    margin-top: 0.5rem;
-    color: red;
-    text-align: center;
 `;

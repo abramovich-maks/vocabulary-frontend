@@ -1,9 +1,8 @@
 import {useState} from "react";
 import {register} from "../../composables/authApi";
 import {useNavigate} from "react-router-dom";
-import {Card} from "../../components/Card";
-
-import {Button, ButtonsContainer, Container, ErrorText, Form, Input,} from "./RegisterPage.styles";
+import {AuthCard, Button, ButtonsContainer, Container, Form, Input} from '../../components/AuthCard';
+import {ErrorMessage} from '../../components/ErrorMessage';
 
 export default function RegisterPage() {
     const navigate = useNavigate();
@@ -29,8 +28,8 @@ export default function RegisterPage() {
             });
 
             navigate("/login");
-        } catch {
-            setError("Registration failed");
+        } catch (err: any) {
+            setError(err?.response?.data?.message || "Registration failed");
         } finally {
             setSubmitting(false);
         }
@@ -44,8 +43,8 @@ export default function RegisterPage() {
         !password.trim();
 
     return (
-        <Card>
-            <Container>
+        <Container>
+            <AuthCard>
                 <h2>Register</h2>
 
                 <Form onSubmit={handleSubmit}>
@@ -83,9 +82,9 @@ export default function RegisterPage() {
                         </Button>
                     </ButtonsContainer>
 
-                    {error && <ErrorText>{error}</ErrorText>}
+                    {error && <ErrorMessage>{error}</ErrorMessage>}
                 </Form>
-            </Container>
-        </Card>
+            </AuthCard>
+        </Container>
     );
 }

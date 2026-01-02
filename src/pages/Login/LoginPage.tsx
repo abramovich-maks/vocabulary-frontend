@@ -2,8 +2,8 @@ import {useState} from "react";
 import {login} from "../../composables/authApi";
 import {useAuth} from "../../composables/AuthContext";
 import {useNavigate} from "react-router-dom";
-import {Card} from '../../components/Card';
-import {Button, ButtonsContainer, Container, ErrorText, Form, Input} from './LoginPage.styles';
+import {ErrorMessage} from '../../components/ErrorMessage';
+import {AuthCard, Button, ButtonsContainer, Container, Form, Input} from '../../components/AuthCard';
 
 export default function LoginPage() {
     const {loginSuccess} = useAuth();
@@ -18,40 +18,42 @@ export default function LoginPage() {
         setError(null);
 
         try {
-            const res = await login({email, password});
+            const res = await login({ email, password });
             loginSuccess(res.data.token);
             navigate("/");
-        } catch {
-            setError("Invalid credentials");
+        } catch (err: any) {
+            setError(err?.response?.data?.message || "Invalid credentials");
         }
     };
 
     return (
-        <Card>
-            <Container>
+        <Container>
+            <AuthCard>
                 <h2>Login</h2>
 
                 <Form onSubmit={handleSubmit}>
                     <Input
                         type="email"
-                        placeholder="email"
+                        placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
 
                     <Input
                         type="password"
-                        placeholder="password"
+                        placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
+
                     <ButtonsContainer>
                         <Button type="submit">Login</Button>
                     </ButtonsContainer>
 
-                    {error && <ErrorText>{error}</ErrorText>}
+                    {error && <ErrorMessage>{error}</ErrorMessage>}
                 </Form>
-            </Container>
-        </Card>
+            </AuthCard>
+        </Container>
     );
+
 }

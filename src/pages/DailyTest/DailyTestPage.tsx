@@ -1,16 +1,30 @@
 import {useEffect, useState} from "react";
-import {getDailyTest, submitDailyTest} from "../../composables/dailyTestApi";
-import type {DailyTestControllerResponseDto, QuestionDto, UserAnswerRequestDto,} from "../../models/models";
 import axios from "axios";
+import {getDailyTest, submitDailyTest,} from "../../composables/dailyTestApi";
+import type {DailyTestControllerResponseDto, QuestionDto, UserAnswerRequestDto,} from "../../models/models";
+import {Button} from "../../components/Button";
+import {
+    AnswerInput,
+    ButtonWrapper,
+    Feedback,
+    Instruction,
+    Progress,
+    QuestionWord,
+    ResultItem,
+    ResultList,
+    ResultRow,
+    ResultSummary,
+    TestContainer,
+    Title,
+    WrongAnswer
+} from "./DailyTest.styles";
 
 function shuffleArray<T>(array: T[]): T[] {
     const result = [...array];
-
     for (let i = result.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [result[i], result[j]] = [result[j], result[i]];
     }
-
     return result;
 }
 
@@ -18,17 +32,20 @@ export default function DailyTestPage() {
     const [questions, setQuestions] = useState<QuestionDto[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [answers, setAnswers] = useState<Record<number, string>>({});
-    const [result, setResult] = useState<DailyTestControllerResponseDto | null>(null);
+    const [result, setResult] =
+        useState<DailyTestControllerResponseDto | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const [showFeedback, setShowFeedback] = useState(false);
-    const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+    const [feedback, setFeedback] = useState<{
+        correct: boolean;
+        correctAnswer: string;
+    } | null>(null);
 
     useEffect(() => {
         getDailyTest()
             .then(res => {
-                if (!res.data.questions || res.data.questions.length === 0) {
+                if (!res.data.questions?.length) {
                     setMessage("No daily test available. Please come back tomorrow.");
                 } else {
                     setQuestions(shuffleArray(res.data.questions));
@@ -47,28 +64,92 @@ export default function DailyTestPage() {
             .finally(() => setLoading(false));
     }, []);
 
+    if (loading) return <p>Loading daily test...</p>;
+
+    if (message) {
+        return (
+            <TestContainer>
+                <Title>Daily Test</Title>
+                <p>{message}</p>
+            </TestContainer>
+        );
+    }
+
+    if (result) {
+        const accuracy = Math.round(
+            (result.correct / result.total) * 100
+        );
+
+        return (
+            <TestContainer>
+                <Title>🎉 Daily Test Completed</Title>
+
+                <ResultSummary>
+                    <ResultItem>
+                        <strong>Score:</strong> {result.correct} / {result.total}
+                    </ResultItem>
+                    <ResultItem>
+                        <strong>Accuracy:</strong> {accuracy}%
+                    </ResultItem>
+                </ResultSummary>
+
+                <ResultList>
+                    {result.answers.map(a => (
+                        <ResultRow key={a.questionId} $correct={a.correct}>
+                        <span>
+                            {a.correctAnswer}
+                        </span>
+
+                            <span>
+                            {a.correct ? "✅" : "❌"}
+                        </span>
+
+                            {!a.correct && (
+                                <WrongAnswer>
+                                    your answer: {a.userAnswer}
+                                </WrongAnswer>
+                            )}
+                        </ResultRow>
+                    ))}
+                </ResultList>
+
+                <ButtonWrapper>
+                    <Button onClick={() => window.location.reload()}>
+                        Back to Home
+                    </Button>
+                </ButtonWrapper>
+            </TestContainer>
+        );
+    }
+
+
+    const currentQuestion = questions[currentIndex];
+    const isLast = currentIndex === questions.length - 1;
+
+    const instruction =
+        currentQuestion.direction === "WORD_TO_TRANSLATION"
+            ? "Translate the word into your language"
+            : "Translate into English";
+
     const handleChange = (value: string) => {
-        const questionId = questions[currentIndex].id;
         setAnswers(prev => ({
             ...prev,
-            [questionId]: value,
+            [currentQuestion.id]: value,
         }));
     };
 
     const handleCheck = () => {
-        const question = questions[currentIndex];
-        const userAnswer = answers[question.id]?.trim().toLowerCase();
-        const correctAnswer = question.answer.trim().toLowerCase();
+        const userAnswer = answers[currentQuestion.id]?.trim().toLowerCase();
+        const correctAnswer = currentQuestion.answer.trim().toLowerCase();
 
-        const correct = userAnswer === correctAnswer;
-
-        setIsCorrect(correct);
-        setShowFeedback(true);
+        setFeedback({
+            correct: userAnswer === correctAnswer,
+            correctAnswer: currentQuestion.answer,
+        });
     };
 
     const handleNext = () => {
-        setShowFeedback(false);
-        setIsCorrect(null);
+        setFeedback(null);
         setCurrentIndex(prev => prev + 1);
     };
 
@@ -82,82 +163,41 @@ export default function DailyTestPage() {
         setResult(res.data);
     };
 
-    if (loading) return <p>Loading daily test...</p>;
-
-    if (message) {
-        return (
-            <div>
-                <h2>Daily Test</h2>
-                <p>{message}</p>
-            </div>
-        );
-    }
-
-    if (result) {
-        return (
-            <div>
-                <h2>Result</h2>
-                <p>Total: {result.total}</p>
-                <p>Correct: {result.correct}</p>
-                <p>Incorrect: {result.incorrect}</p>
-
-                {result.answers.map(a => (
-                    <div key={a.questionId}>
-                        <p>
-                            Your answer: {a.userAnswer} | Correct: {a.correctAnswer}
-                            {a.correct ? " ✅" : " ❌"}
-                        </p>
-                    </div>
-                ))}
-            </div>
-        );
-    }
-
-    const currentQuestion = questions[currentIndex];
-    const isLast = currentIndex === questions.length - 1;
-
     return (
-        <div>
-            <h2>Daily Test</h2>
+        <TestContainer>
+            <Title>Daily Test</Title>
 
-            <p>
-                Question {currentIndex + 1} / {questions.length}
-            </p>
+            <Instruction>{instruction}</Instruction>
 
-            <p>
-                {currentQuestion.prompt}{" "}
-                <small>({currentQuestion.direction})</small>
-            </p>
+            <QuestionWord>{currentQuestion.prompt}</QuestionWord>
 
-            <input
+            <AnswerInput
                 type="text"
-                disabled={showFeedback}
+                disabled={feedback !== null}
                 value={answers[currentQuestion.id] || ""}
                 onChange={e => handleChange(e.target.value)}
             />
 
-            {showFeedback && (
-                <p
-                    style={{
-                        color: isCorrect ? "green" : "red",
-                        fontWeight: "bold",
-                        marginTop: "8px",
-                    }}
-                >
-                    Correct answer: {currentQuestion.answer}
-                    {isCorrect ? " ✅" : " ❌"}
-                </p>
+            {feedback && (
+                <Feedback $correct={feedback.correct}>
+                    Correct answer: {feedback.correctAnswer}
+                    {feedback.correct ? " ✅" : " ❌"}
+                </Feedback>
             )}
 
-            <div style={{marginTop: "16px"}}>
-                {!showFeedback ? (
-                    <button onClick={handleCheck}>Check</button>
+            <ButtonWrapper>
+                {!feedback ? (
+                    <Button onClick={handleCheck}>Check</Button>
                 ) : !isLast ? (
-                    <button onClick={handleNext}>Next</button>
+                    <Button onClick={handleNext}>Next</Button>
                 ) : (
-                    <button onClick={handleSubmit}>Finish</button>
+                    <Button onClick={handleSubmit}>Finish</Button>
                 )}
-            </div>
-        </div>
+            </ButtonWrapper>
+
+            <Progress>
+                Question {currentIndex + 1} / {questions.length}
+            </Progress>
+        </TestContainer>
     );
 }

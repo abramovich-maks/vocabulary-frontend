@@ -1,47 +1,63 @@
 import {Route, Routes} from "react-router-dom";
-import {useAuth} from "./composables/AuthContext";
+import {ThemeProvider} from "styled-components";
+
+import {GlobalStyles} from "./components/GlobalStyles";
+import {PageWrapper} from "./components/PageWrapper/PageWrapper";
+import {useDarkMode} from "./composables/useDarkMode";
 
 import HomePage from "./pages/Home/HomePage";
 import LoginPage from "./pages/Login/LoginPage";
 import RegisterPage from "./pages/Register/RegisterPage";
-import WordListPage from "./pages/Dictionary/WordListPage";
+import WordListPage from "./pages/WordList/WordListPage";
+import AddWordPage from "./pages/AddWord/AddWordPage";
 import DailyTestPage from "./pages/DailyTest/DailyTestPage";
 import PrivateRoute from "./components/PrivateRoute";
 
-function App() {
-    const {checkingAuth} = useAuth();
+import {darkTheme, lightTheme} from "./Theme";
 
-    if (checkingAuth) {
-        return <p>Loading...</p>;
-    }
+export default function App() {
+    const [theme, toggleTheme] = useDarkMode();
+    const themeMode = theme === "light" ? lightTheme : darkTheme;
 
     return (
-        <Routes>
-            <Route path="/" element={<HomePage/>}/>
-            <Route path="/login" element={<LoginPage/>}/>
-            <Route path="/register" element={<RegisterPage/>}/>
+        <ThemeProvider theme={themeMode}>
+                <GlobalStyles/>
+                <PageWrapper theme={theme} toggleTheme={toggleTheme}>
+                    <Routes>
+                        <Route path="/" element={<HomePage/>}/>
+                        <Route path="/login" element={<LoginPage/>}/>
+                        <Route path="/register" element={<RegisterPage/>}/>
 
-            <Route
-                path="/words"
-                element={
-                    <PrivateRoute>
-                        <WordListPage/>
-                    </PrivateRoute>
-                }
-            />
+                        <Route
+                            path="/words"
+                            element={
+                                <PrivateRoute>
+                                    <WordListPage/>
+                                </PrivateRoute>
+                            }
+                        />
 
-            <Route
-                path="/daily-test"
-                element={
-                    <PrivateRoute>
-                        <DailyTestPage/>
-                    </PrivateRoute>
-                }
-            />
+                        <Route
+                            path="/daily-test"
+                            element={
+                                <PrivateRoute>
+                                    <DailyTestPage/>
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/words/add"
+                            element={
+                                <PrivateRoute>
+                                    <AddWordPage/>
+                                </PrivateRoute>
+                            }
+                        />
 
-            <Route path="*" element={<div>404</div>}/>
-        </Routes>
+
+                        <Route path="*" element={<div>404</div>}/>
+                    </Routes>
+                </PageWrapper>
+        </ThemeProvider>
     );
 }
-
-export default App;

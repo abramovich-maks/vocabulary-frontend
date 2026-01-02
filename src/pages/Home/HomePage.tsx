@@ -1,6 +1,5 @@
 import {useAuth} from "../../composables/AuthContext";
 import {GoToLink} from "../../components/GoToLink";
-
 import {DescriptionSection, HeroBanner, HeroContent, PlayLinkContainer,} from "./HomePage.styles";
 
 export default function HomePage() {
@@ -10,39 +9,44 @@ export default function HomePage() {
         <>
             <HeroBanner>
                 <HeroContent>
-                    {!isAuthenticated ? (
-                        <h1>
-                            Learn English <span>effectively</span>
-                            <br/>
-                            with <span>Spaced Repetition</span>
-                        </h1>
-                    ) : (
-                        <h1>
-                            Welcome back!
-                            <br/>
-                            Time for your <span>daily practice</span>
-                        </h1>
-                    )}
+                    <h1>
+                        {!isAuthenticated ? (
+                            <>
+                                Learn English <span>effectively</span>
+                                <br/>
+                                with <span>Spaced Repetition</span>
+                            </>
+                        ) : (
+                            <>
+                                Welcome back!
+                                <br/>
+                                Time for your <span>daily practice</span>
+                            </>
+                        )}
+                    </h1>
                 </HeroContent>
             </HeroBanner>
 
             <PlayLinkContainer>
                 {!isAuthenticated ? (
                     <>
-                        <GoToLink to="/register">
-                            Register <span>{">"}</span>
+                        <GoToLink to="/register" $primary>
+                            Get started <span>{'>'}</span>
                         </GoToLink>
-                        <GoToLink to="/login">
-                            Login <span>{">"}</span>
+
+                        <GoToLink to="/login" $secondary>
+                            I already have an account
                         </GoToLink>
+
                     </>
                 ) : (
                     <>
-                        <GoToLink to="/daily-test">
-                            Start daily test <span>{">"}</span>
+                        <GoToLink to="/daily-test" $primary>
+                            Start daily test <span>{'>'}</span>
                         </GoToLink>
-                        <GoToLink to="/words">
-                            My dictionary <span>{">"}</span>
+
+                        <GoToLink to="/words" $secondary>
+                            Go to my dictionary
                         </GoToLink>
                     </>
                 )}
