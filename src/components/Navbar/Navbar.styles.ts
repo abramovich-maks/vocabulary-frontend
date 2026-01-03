@@ -2,7 +2,7 @@ import {NavLink} from 'react-router-dom';
 import styled from 'styled-components';
 
 interface HeaderProps {
-    isScrolled: boolean;
+    $isScrolled: boolean;
 }
 
 export const Header = styled.header<HeaderProps>`

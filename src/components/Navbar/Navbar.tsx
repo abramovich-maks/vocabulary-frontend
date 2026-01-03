@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useAuth} from '../../composables/AuthContext';
 import {ThemeToggler} from '../ThemeToggler/ThemeToggler';
 import {Header, HeaderInner, Logo, LogoContainer, Nav, NavWrapper, StyledLink} from './Navbar.styles';
 
 export const Navbar = ({toggleTheme, theme}: any) => {
     const [isScrolled, setIsScrolled] = useState(false);
-
     const {logout, isAuthenticated} = useAuth();
 
     useEffect(() => {
@@ -13,13 +12,6 @@ export const Navbar = ({toggleTheme, theme}: any) => {
         window.addEventListener('scroll', headerScrollAnimation);
         return () => window.removeEventListener('scroll', headerScrollAnimation);
     }, []);
-
-    const handleLogout = (e: React.MouseEvent) => {
-        e.preventDefault();
-        logout();
-        navigate('/');
-    };
-
 
     return (
         <Header $isScrolled={isScrolled}>
@@ -42,7 +34,7 @@ export const Navbar = ({toggleTheme, theme}: any) => {
                                 <StyledLink to="/words">My dictionary</StyledLink>
                                 <StyledLink to="/daily-test">Daily test</StyledLink>
                                 <StyledLink to="/words/add">Add word</StyledLink>
-                                <StyledLink onClick={logout}>Logout</StyledLink>
+                                <StyledLink to="/login" onClick={logout}>Logout</StyledLink>
                             </>
                         )}
                     </Nav>

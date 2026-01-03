@@ -1,3 +1,4 @@
+import type {ReactNode} from 'react';
 import {createContext, useContext, useEffect, useState} from "react";
 import {logout as logoutApi, refresh} from "./authApi";
 import {authStore} from "./authStore";
@@ -10,7 +11,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({children}: { children: React.ReactNode }) {
+export function AuthProvider({children}: { children: ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(authStore.isAuthenticated());
 
     useEffect(() => {

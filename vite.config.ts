@@ -1,5 +1,4 @@
 import react from '@vitejs/plugin-react';
-import * as fs from 'node:fs';
 import { defineConfig } from 'vite';
 
 export default () => {
