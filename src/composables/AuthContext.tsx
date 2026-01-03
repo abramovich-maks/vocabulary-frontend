@@ -1,5 +1,5 @@
-import {createContext, useContext, useState, useEffect} from "react";
-import {logout as logoutApi} from "./authApi";
+import {createContext, useContext, useEffect, useState} from "react";
+import {logout as logoutApi, refresh} from "./authApi";
 import {authStore} from "./authStore";
 
 interface AuthContextValue {
@@ -14,10 +14,22 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(authStore.isAuthenticated());
 
     useEffect(() => {
+        const initAuth = async () => {
+            try {
+                const res = await refresh();
+                authStore.setAccessToken(res.data.token);
+            } catch {
+                authStore.clear();
+            }
+        };
+
+        initAuth();
+
         return authStore.subscribe(() => {
             setIsAuthenticated(authStore.isAuthenticated());
         });
     }, []);
+
 
     const loginSuccess = (token: string) => {
         authStore.setAccessToken(token);
@@ -30,7 +42,7 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, loginSuccess, logout }}>
+        <AuthContext.Provider value={{isAuthenticated, loginSuccess, logout}}>
             {children}
         </AuthContext.Provider>
     );

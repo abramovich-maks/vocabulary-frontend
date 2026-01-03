@@ -13,3 +13,7 @@ export const logout = () => {
 export const register = (data: RegisterRequest) => {
     return apiClient.post("/register", data);
 };
+
+export const refresh = () => {
+    return apiClient.post("/token/refresh");
+};
