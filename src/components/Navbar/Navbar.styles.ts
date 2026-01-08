@@ -67,12 +67,17 @@ export const NavWrapper = styled.nav`
 export const Nav = styled.ul`
     width: 100%;
     margin: 0;
-    padding: 1rem 0;
+    padding: 0.75rem 0;
     list-style-type: none;
     display: flex;
     flex-direction: row;
-    justify-content: center;
-
+    justify-content: space-between;
+    scrollbar-width: none;     
+    &::-webkit-scrollbar {
+        display: none;    
+    }
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     @media (min-width: 768px) {
         padding: 0;
     }
@@ -86,7 +91,9 @@ export const StyledLink = styled(NavLink)`
     text-decoration: none;
     position: relative;
     transition: color 0.3s;
-
+    flex-shrink: 0;
+    padding: 0 0.9rem;
+    white-space: nowrap;
     :hover {
         color: ${({theme}) => theme.textPrimary};
     }
