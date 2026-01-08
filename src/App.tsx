@@ -11,6 +11,7 @@ import RegisterPage from "./pages/Register/RegisterPage";
 import WordListPage from "./pages/WordList/WordListPage";
 import AddWordPage from "./pages/AddWord/AddWordPage";
 import DailyTestPage from "./pages/DailyTest/DailyTestPage";
+import DailyTestResultPage from "./pages/DailyTest/DailyTestResultPage";
 import PrivateRoute from "./components/PrivateRoute";
 
 import {darkTheme, lightTheme} from "./Theme";
@@ -46,6 +47,13 @@ export default function App() {
                             }
                         />
                         <Route
+                            path="/dailytest/result"
+                            element={
+                                <PrivateRoute>
+                                    <DailyTestResultPage />
+                                </PrivateRoute>
+                            }
+                        />                        <Route
                             path="/words/add"
                             element={
                                 <PrivateRoute>
