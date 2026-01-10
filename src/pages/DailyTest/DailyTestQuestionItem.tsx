@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { answerQuestion } from "../../composables/dailyTestApi";
-import { Button } from "../../components/Button";
-import { Input } from "../../components/Input";
-import { ErrorMessage } from "../../components/ErrorMessage";
-import type { QuestionDto } from "../../models/models";
-import { useNavigate } from "react-router-dom";
+import {useState} from "react";
+import {answerQuestion} from "../../composables/dailyTestApi";
+import {Button} from '../../components/Button';
+import {ErrorMessage} from "../../components/ErrorMessage";
+import type {QuestionDto} from "../../models/models";
+import {useNavigate} from "react-router-dom";
+import {AnswerInput, Instruction, QuestionWord,UserAnswer,Feedback} from "./DailyTest.styles"
 
 interface Props {
     question: QuestionDto;
@@ -24,8 +24,8 @@ export default function DailyTestQuestionItem({question, isLast, onNext,}: Props
     const navigate = useNavigate();
 
     const instruction = question.direction === "WORD_TO_TRANSLATION"
-            ? "Translate the word into your language"
-            : "Translate into English";
+        ? "Translate the word into your language"
+        : "Translate into English";
 
     const handleCheck = async () => {
         if (!answer.trim()) {
@@ -57,26 +57,28 @@ export default function DailyTestQuestionItem({question, isLast, onNext,}: Props
     };
 
     const handleFinish = () => {
-        navigate("/dailytest/result", { replace: true });
+        navigate("/dailytest/result", {replace: true});
     };
 
     return (
-        <div>
-            <p><strong>{instruction}</strong></p>
-            <h3>{question.prompt}</h3>
+        <>
+            <Instruction>{instruction}</Instruction>
+            <QuestionWord>{question.prompt}</QuestionWord>
 
-            <Input
+            <AnswerInput
                 value={answer}
                 onChange={e => setAnswer(e.target.value)}
                 disabled={!!feedback}
             />
 
             {feedback && (
-                <p>
-                    Correct answer: <strong>{feedback.correctAnswer}</strong>{" "}
-                    {feedback.correct ? "✅" : "❌"}
-                </p>
+                <>
+                    <Feedback $correct={feedback.correct}>
+                        Correct answer: <strong>{feedback.correctAnswer}</strong>
+                    </Feedback>
+                </>
             )}
+
 
             {error && <ErrorMessage>{error}</ErrorMessage>}
 
@@ -89,6 +91,6 @@ export default function DailyTestQuestionItem({question, isLast, onNext,}: Props
             ) : (
                 <Button onClick={handleFinish}>Finish</Button>
             )}
-        </div>
+        </>
     );
 }

@@ -3,7 +3,17 @@ import axios from "axios";
 import {getResult} from "../../composables/dailyTestApi";
 import type {DailyTestResponseDto} from "../../models/models";
 import {Button} from "../../components/Button";
-import {ResultItem, ResultList, ResultRow, ResultSummary, TestContainer, Title, WrongAnswer} from "./DailyTest.styles";
+import {
+    CorrectText,
+    ResultItem,
+    ResultList,
+    ResultRow,
+    ResultSummary,
+    StatusIcon,
+    TestContainer,
+    TextContainer,
+    UserAnswer
+} from "./DailyTest.styles";
 import {useNavigate} from "react-router-dom";
 
 export default function DailyTestResultPage() {
@@ -27,7 +37,7 @@ export default function DailyTestResultPage() {
     if (error) {
         return (
             <TestContainer>
-                <Title>Daily Test</Title>
+                <h2>Daily Test</h2>
                 <p>{error}</p>
             </TestContainer>
         );
@@ -41,7 +51,7 @@ export default function DailyTestResultPage() {
 
     return (
         <TestContainer>
-            <Title>🎉 Daily Test Completed</Title>
+            <h2>🎉 Daily Test Completed</h2>
 
             <ResultSummary>
                 <ResultItem>
@@ -55,13 +65,20 @@ export default function DailyTestResultPage() {
             <ResultList>
                 {result.answers.map(answer => (
                     <ResultRow key={answer.questionId} $correct={answer.correct}>
-                        <span>{answer.correctAnswer}</span>
-                        {!answer.correct && (
-                            <WrongAnswer>
-                                your answer: {answer.userAnswer}
-                            </WrongAnswer>
-                        )}
-                        <span>{answer.correct ? "✅" : "❌"}</span>
+
+                        <TextContainer>
+                            <CorrectText>{answer.correctAnswer}</CorrectText>
+
+                            {!answer.correct && (
+                                <UserAnswer>
+                                    your answer: {answer.userAnswer}
+                                </UserAnswer>
+                            )}
+                        </TextContainer>
+
+                        <StatusIcon>
+                            {answer.correct ? "✅" : "❌"}
+                        </StatusIcon>
 
                     </ResultRow>
                 ))}

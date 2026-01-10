@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import { getDailyTest } from "../../composables/dailyTestApi";
-import type { QuestionDto } from "../../models/models";
+import {getDailyTest} from "../../composables/dailyTestApi";
+import type {QuestionDto} from "../../models/models";
 import DailyTestQuestionItem from "./DailyTestQuestionItem";
-import { TestContainer, Title } from "./DailyTest.styles";
+import {TestContainer} from "./DailyTest.styles";
 
 function shuffleArray<T>(array: T[]): T[] {
     const result = [...array];
@@ -47,7 +47,7 @@ export default function DailyTestPage() {
     if (message) {
         return (
             <TestContainer>
-                <Title>Daily Test</Title>
+                <h2>Daily Test</h2>
                 <p>{message}</p>
             </TestContainer>
         );
@@ -57,7 +57,7 @@ export default function DailyTestPage() {
 
     return (
         <TestContainer>
-            <Title>Daily Test</Title>
+            <h2>Daily Test</h2>
 
             <DailyTestQuestionItem
                 question={questions[currentIndex]}
