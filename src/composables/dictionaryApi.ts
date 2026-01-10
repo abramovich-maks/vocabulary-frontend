@@ -8,8 +8,10 @@ import type {
     WordDetails
 } from '../models/models';
 
-export const getAllWords = () => {
-    return apiClient.get<GetAllWordsResponse>("/words");
+export const getAllWords = (page = 0, size = 10) => {
+    return apiClient.get<PageResponse<WordDto>>("/words", {
+        params: { page, size }
+    });
 };
 
 export const addWord = (data: AddWordRequest) => {

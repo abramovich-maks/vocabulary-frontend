@@ -4,8 +4,12 @@ export interface WordDto {
     translate: string;
 }
 
-export interface GetAllWordsResponse {
-    dtoResponse: WordDto[];
+export interface PageResponse<T> {
+    content: T[];
+    number: number;
+    size: number;
+    totalPages: number;
+    totalElements: number;
 }
 
 export interface UpdateWordRequest {

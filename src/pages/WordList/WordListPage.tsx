@@ -3,6 +3,7 @@ import {deleteWord, getAllWords, updateWord} from "../../composables/dictionaryA
 import {useAuth} from "../../composables/AuthContext";
 import {WordItem} from "./WordItem";
 import type {WordDto} from "../../models/models";
+import {PageButton, PageInfo, PaginationRow} from "./WordList.styles"
 
 export default function WordListPage() {
     const {isAuthenticated} = useAuth();
@@ -10,11 +11,17 @@ export default function WordListPage() {
     const [words, setWords] = useState<WordDto[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [openId, setOpenId] = useState<number | null>(null);
+    const [page, setPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
 
-    const loadWords = async () => {
+    const loadWords = async (pageNumber = 0) => {
         try {
-            const res = await getAllWords();
-            setWords(res.data.dtoResponse);
+            const res = await getAllWords(pageNumber);
+
+            setWords(res.data.content);
+            setPage(res.data.number);
+            setTotalPages(res.data.totalPages);
+
         } catch {
             setError("Failed to load words");
         }
@@ -26,13 +33,13 @@ export default function WordListPage() {
 
     const handleDelete = async (id: number) => {
         await deleteWord(id);
-        loadWords();
+        loadWords(page);
         setOpenId(null);
     };
 
     const handleUpdate = async (id: number, word: string, translate: string) => {
         await updateWord(id, {word, translate});
-        loadWords();
+        loadWords(page);
     };
 
     if (error) return <p>{error}</p>;
@@ -53,6 +60,26 @@ export default function WordListPage() {
                     onUpdate={handleUpdate}
                 />
             ))}
+            <PaginationRow>
+                <PageButton
+                    disabled={page === 0}
+                    onClick={() => loadWords(page - 1)}
+                >
+                    Prev
+                </PageButton>
+
+                <PageInfo>
+                    Page {page + 1} / {totalPages}
+                </PageInfo>
+
+                <PageButton
+                    disabled={page + 1 >= totalPages}
+                    onClick={() => loadWords(page + 1)}
+                >
+                    Next
+                </PageButton>
+            </PaginationRow>
+
         </>
     );
 }
