@@ -51,21 +51,23 @@ export const PaginationRow = styled.div`
 `;
 
 export const PageButton = styled.button<{ disabled?: boolean }>`
-        padding: 0.4rem 0.9rem;
-        border-radius: 20px;
-        border: 1px solid ${({theme, disabled}) => disabled ? theme.textSecondary : theme.button};
-        background-color: ${({theme, disabled}) => disabled ? theme.background : theme.card};
-        color: ${({theme, disabled}) => disabled ? theme.textSecondary : theme.button};
-        font-weight: 500;
-        cursor: ${({disabled}) => (disabled ? "not-allowed" : "pointer")};
-        transition: all 0.2s ease;
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    border: 1px solid ${({theme, disabled}) => disabled ? theme.textSecondary : theme.button};
+    background-color: ${({theme, disabled}) => disabled ? theme.background : theme.card};
+    color: ${({theme, disabled}) => disabled ? theme.textSecondary : theme.button};
+    font-weight: 500;
+    cursor: ${({disabled}) => (disabled ? "not-allowed" : "pointer")};
+    transition: all 0.2s ease;
 
-        &:hover {
-                ${({disabled}) => !disabled && `
-        background-color: ${({theme}) => theme.button};
-        color: ${({theme}) => theme.buttonText};
-        `}
-        }
+    &:hover {
+        ${({disabled, theme}) =>
+                !disabled &&
+                `
+                background-color: ${theme.button};
+                color: ${theme.buttonText};
+            `}
+    }
 `;
 
 export const PageInfo = styled.span`

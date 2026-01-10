@@ -1,16 +1,16 @@
 import {apiClient} from "../composables/useClient";
 
 import type {
-    GetAllWordsResponse,
     WordDto,
     UpdateWordRequest,
     AddWordRequest,
-    WordDetails
+    WordDetails,
+    PageResponse
 } from '../models/models';
 
 export const getAllWords = (page = 0, size = 10) => {
     return apiClient.get<PageResponse<WordDto>>("/words", {
-        params: { page, size }
+        params: {page, size}
     });
 };
 
