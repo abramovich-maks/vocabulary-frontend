@@ -4,7 +4,7 @@ import {Button} from '../../components/Button';
 import {ErrorMessage} from "../../components/ErrorMessage";
 import type {QuestionDto} from "../../models/models";
 import {useNavigate} from "react-router-dom";
-import {AnswerInput, Instruction, QuestionWord,UserAnswer,Feedback} from "./DailyTest.styles"
+import {AnswerInput, Feedback, Instruction, QuestionWord} from "./DailyTest.styles"
 
 interface Props {
     question: QuestionDto;

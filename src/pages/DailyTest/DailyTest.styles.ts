@@ -57,7 +57,7 @@ export const ResultRow = styled.div<{ $correct: boolean }>`
     padding: 0.8rem 1rem;
     margin-bottom: 0.6rem;
     border-radius: 8px;
-    background-color: ${({theme}) => theme.backgroundSecondary || '#f5f5f5'};
+    background-color: ${({theme}) => theme.background};
     border-left: 5px solid ${({$correct, theme}) => ($correct ? theme.positive : theme.negative)};
 `;
 
