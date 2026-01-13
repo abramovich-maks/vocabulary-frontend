@@ -1,28 +1,43 @@
-import {useState} from "react";
-import {login} from "../../composables/authApi";
-import {useAuth} from "../../composables/AuthContext";
-import {useNavigate} from "react-router-dom";
-import {ErrorMessage} from '../../components/ErrorMessage';
-import {AuthCard, Button, ButtonsContainer, Container, Form, Input} from '../../components/AuthCard';
+import { useState } from "react";
+import { login } from "../../composables/authApi";
+import { useAuth } from "../../composables/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { ErrorMessage } from "../../components/ErrorMessage";
+import {
+    AuthCard,
+    Button,
+    ButtonsContainer,
+    Container,
+    Form,
+    Input
+} from "../../components/AuthCard";
 
 export default function LoginPage() {
-    const {loginSuccess} = useAuth();
+    const { loginSuccess } = useAuth();
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState<string[] | null>(null);
+    const [error, setError] = useState<string[]>([]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(null);
+        setError([]);
 
         try {
             const res = await login({ email, password });
             loginSuccess(res.data.token);
             navigate("/");
         } catch (err: any) {
-            setError(err?.response?.data?.message || "Invalid credentials");
+            const apiMessage = err?.response?.data?.message;
+
+            if (Array.isArray(apiMessage)) {
+                setError(apiMessage);
+            } else if (typeof apiMessage === "string") {
+                setError([apiMessage]);
+            } else {
+                setError(["Invalid credentials"]);
+            }
         }
     };
 
@@ -50,7 +65,7 @@ export default function LoginPage() {
                         <Button type="submit">Login</Button>
                     </ButtonsContainer>
 
-                    {error && (
+                    {error.length > 0 && (
                         <ErrorMessage>
                             <ul>
                                 {error.map((msg, index) => (
