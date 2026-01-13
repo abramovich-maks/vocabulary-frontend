@@ -11,7 +11,7 @@ export default function RegisterPage() {
     const [surname, setSurname] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string[] | null>(null);
     const [submitting, setSubmitting] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -29,18 +29,20 @@ export default function RegisterPage() {
 
             navigate("/login");
         } catch (err: any) {
-            setError(err?.response?.data?.message || "Registration failed");
+            const apiError = err?.response?.data;
+
+            if (Array.isArray(apiError?.message)) {
+                setError(apiError.message);
+            } else if (typeof apiError?.message === "string") {
+                setError([apiError.message]);
+            } else {
+                setError(["Registration failed"]);
+            }
         } finally {
             setSubmitting(false);
         }
     };
 
-    const isDisabled =
-        submitting ||
-        !username.trim() ||
-        !surname.trim() ||
-        !email.trim() ||
-        !password.trim();
 
     return (
         <Container>
@@ -77,12 +79,20 @@ export default function RegisterPage() {
                     />
 
                     <ButtonsContainer>
-                        <Button type="submit" disabled={isDisabled}>
+                        <Button type="submit">
                             {submitting ? "Registering..." : "Register"}
                         </Button>
                     </ButtonsContainer>
 
-                    {error && <ErrorMessage>{error}</ErrorMessage>}
+                    {error && (
+                        <ErrorMessage>
+                            <ul>
+                                {error.map((msg, index) => (
+                                    <li key={index}>{msg}</li>
+                                ))}
+                            </ul>
+                        </ErrorMessage>
+                    )}
                 </Form>
             </AuthCard>
         </Container>

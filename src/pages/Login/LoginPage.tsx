@@ -11,7 +11,7 @@ export default function LoginPage() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string[] | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -50,7 +50,15 @@ export default function LoginPage() {
                         <Button type="submit">Login</Button>
                     </ButtonsContainer>
 
-                    {error && <ErrorMessage>{error}</ErrorMessage>}
+                    {error && (
+                        <ErrorMessage>
+                            <ul>
+                                {error.map((msg, index) => (
+                                    <li key={index}>{msg}</li>
+                                ))}
+                            </ul>
+                        </ErrorMessage>
+                    )}
                 </Form>
             </AuthCard>
         </Container>
