@@ -36,7 +36,7 @@ export default function LoginPage() {
             } else if (typeof apiMessage === "string") {
                 setError([apiMessage]);
             } else {
-                setError(["Invalid credentials"]);
+                setError(["Invalid email or password"]);
             }
         }
     };

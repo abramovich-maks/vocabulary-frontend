@@ -67,8 +67,7 @@ export default function DailyTestResultPage() {
                     <ResultRow key={answer.questionId} $correct={answer.correct}>
 
                         <TextContainer>
-                            <CorrectText>{answer.correctAnswer}</CorrectText>
-
+                            <CorrectText>{answer.word} → {answer.correctAnswer}</CorrectText>
                             {!answer.correct && (
                                 <UserAnswer>
                                     your answer: {answer.userAnswer}

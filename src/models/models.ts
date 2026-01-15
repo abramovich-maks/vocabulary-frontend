@@ -69,6 +69,7 @@ export interface UserAnswerRequestDto {
 export interface AnswerResultDto {
     questionId: number;
     wordEntryId: number;
+    word: string;
     userAnswer: string;
     correctAnswer: string;
     correct: boolean;
