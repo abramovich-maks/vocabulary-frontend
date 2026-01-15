@@ -2,13 +2,21 @@ import {useState} from "react";
 import {register} from "../../composables/authApi";
 import {useNavigate} from "react-router-dom";
 import {AuthCard, Button, ButtonsContainer, Container, Form, Input} from '../../components/AuthCard';
+import {Select} from './RegisterPage.styles'
 import {ErrorMessage} from '../../components/ErrorMessage';
+
+const LANGUAGES = [
+    { value: "RU", label: "Русский (RU)" },
+    { value: "PL", label: "Polski (PL)" },
+    { value: "DE", label: "Deutsch (DE)" },
+];
 
 export default function RegisterPage() {
     const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
     const [surname, setSurname] = useState("");
+    const [language, setLanguage] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string[] | null>(null);
@@ -23,6 +31,7 @@ export default function RegisterPage() {
             await register({
                 username,
                 surname,
+                language,
                 email,
                 password,
             });
@@ -55,6 +64,7 @@ export default function RegisterPage() {
                         placeholder="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        required
                     />
 
                     <Input
@@ -62,6 +72,7 @@ export default function RegisterPage() {
                         placeholder="surname"
                         value={surname}
                         onChange={(e) => setSurname(e.target.value)}
+                        required
                     />
 
                     <Input
@@ -69,6 +80,7 @@ export default function RegisterPage() {
                         placeholder="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        required
                     />
 
                     <Input
@@ -76,10 +88,24 @@ export default function RegisterPage() {
                         placeholder="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                     />
 
+                    <Select
+                        value={language}
+                        onChange={(e) => setLanguage(e.target.value)}
+                        required
+                    >
+                        <option value="" disabled>Select language</option>
+                        {LANGUAGES.map((lang) => (
+                            <option key={lang.value} value={lang.value}>
+                                {lang.label}
+                            </option>
+                        ))}
+                    </Select>
+
                     <ButtonsContainer>
-                        <Button type="submit">
+                        <Button type="submit" disabled={submitting}>
                             {submitting ? "Registering..." : "Register"}
                         </Button>
                     </ButtonsContainer>

@@ -49,3 +49,31 @@ export const Button = styled.button`
         background-color: ${({theme}) => theme.buttonHover};
     }
 `;
+
+export const Select = styled.select`
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    border: 1px solid ${({theme}) => theme.textSecondary};
+    border-radius: 0.5rem;
+    background-color: ${({theme}) => theme.card};
+    color: ${({theme}) => theme.textPrimary};
+    cursor: pointer;
+    transition: border-color 0.3s;
+
+    &:focus {
+        outline: none;
+        border-color: ${({theme}) => theme.button};
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    option {
+        background-color: ${({theme}) => theme.card};
+        color: ${({theme}) => theme.textPrimary};
+    }
+`;

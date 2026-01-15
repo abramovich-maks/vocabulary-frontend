@@ -30,6 +30,7 @@ export interface LoginRequest {
 export interface RegisterRequest {
     username: string;
     surname: string;
+    language: string;
     email: string;
     password: string;
 }
