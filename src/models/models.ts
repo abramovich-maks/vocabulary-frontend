@@ -22,6 +22,10 @@ export interface AddWordRequest {
     translate: string;
 }
 
+export interface AddWordAutoTranslate {
+    word: string;
+}
+
 export interface LoginRequest {
     email: string;
     password: string;

@@ -4,22 +4,21 @@ import {Button} from '../../components/Button';
 import {Input} from '../../components/Input';
 import {ErrorMessage} from '../../components/ErrorMessage';
 
-
 interface Props {
-    onSubmit: (word: string, translate: string) => void;
+    onSubmit: (word: string) => void;
+    onSwitchToManual: () => void;
     loading?: boolean;
     error?: string | null;
-    onBack?: () => void;
-    initialWord?: string;
+    showManualOption?: boolean;
 }
 
-export default function AddWordForm({onSubmit, loading, onBack, initialWord = "", error}: Props) {
-    const [word, setWord] = useState(initialWord);
-    const [translate, setTranslate] = useState("");
+
+export default function AddWordAutoForm({onSubmit, onSwitchToManual, loading, error, showManualOption}: Props) {
+    const [word, setWord] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(word, translate);
+        onSubmit(word);
     };
 
     return (
@@ -34,28 +33,22 @@ export default function AddWordForm({onSubmit, loading, onBack, initialWord = ""
                         onChange={e => setWord(e.target.value)}
                     />
                 </Field>
-
-                <Field>
-                    <label>Translation</label>
-                    <Input
-                        value={translate}
-                        onChange={e => setTranslate(e.target.value)}
-                    />
-                </Field>
-                {onBack && (
-                    <Button
-                        type="button"
-                        onClick={onBack}
-                        disabled={loading}
-                    >
-                        Back
-                    </Button>
-                )}
                 <Button type="submit" disabled={loading}>
                     {loading ? "Adding..." : "Add word"}
                 </Button>
 
-                {error && <ErrorMessage>{error}</ErrorMessage>}
+                {error && (
+                    <>
+                        <ErrorMessage>{error}</ErrorMessage>
+                        {showManualOption && (
+                            <Button
+                                type="button"
+                                onClick={onSwitchToManual}>
+                                Add manually
+                            </Button>
+                        )}
+                    </>
+                )}
             </StyledCard>
         </FormAddedWord>
     );

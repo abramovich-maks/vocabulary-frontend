@@ -5,7 +5,8 @@ import type {
     UpdateWordRequest,
     AddWordRequest,
     WordDetails,
-    PageResponse
+    PageResponse,
+    AddWordAutoTranslate
 } from '../models/models';
 
 export const getAllWords = (page = 0, size = 10) => {
@@ -16,6 +17,10 @@ export const getAllWords = (page = 0, size = 10) => {
 
 export const addWord = (data: AddWordRequest) => {
     return apiClient.post<WordDto>("/words", data);
+};
+
+export const addWordAutoTranslate = (data: AddWordAutoTranslate) => {
+    return apiClient.post<WordDto>("/words/auto", data);
 };
 
 export const deleteWord = (id: number) => {
