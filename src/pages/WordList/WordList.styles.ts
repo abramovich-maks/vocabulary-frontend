@@ -76,3 +76,57 @@ export const PageInfo = styled.span`
     min-width: 90px;
     text-align: center;
 `;
+
+export const DetailsContainer = styled.div`
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: ${({theme}) => theme.background};
+    border-radius: 0.5rem;
+    text-align: left;
+`;
+
+export const DetailSection = styled.div`
+    margin-bottom: 0.75rem;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+`;
+
+export const Label = styled.span`
+    font-weight: 600;
+    color: ${({theme}) => theme.textSecondary};
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+`;
+
+export const Content = styled.p`
+    margin: 0.25rem 0 0 0;
+    color: ${({theme}) => theme.textPrimary};
+    line-height: 1.5;
+`;
+
+export const AudioPlayer = styled.audio`
+    width: 100%;
+    margin-top: 0.5rem;
+`;
+
+export const AlternativeList = styled.ul`
+    margin: 0.25rem 0 0 0;
+    padding-left: 1.5rem;
+    color: ${({theme}) => theme.textPrimary};
+`;
+
+export const LoadingText = styled.p`
+    color: ${({theme}) => theme.textSecondary};
+    text-align: center;
+    margin-top: 1rem;
+`;
+
+export const NoDataText = styled.p`
+    color: ${({theme}) => theme.textSecondary};
+    text-align: center;
+    margin-top: 1rem;
+    font-style: italic;
+`;

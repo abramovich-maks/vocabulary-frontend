@@ -40,11 +40,10 @@ export interface RegisterRequest {
 }
 
 export interface WordDetails {
-    word: string;
     phonetic: string;
     audioUrl: string;
-    definition: string;
     example: string;
+    alternativeTranslate: string[]
 }
 
 export interface QuestionDto {
