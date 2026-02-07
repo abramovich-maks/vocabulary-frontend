@@ -1,12 +1,20 @@
 import {apiClient} from "../composables/useClient";
 
 import type {
-    WordDto,
-    UpdateWordRequest,
+    AddWordAutoTranslate,
     AddWordRequest,
-    WordDetails,
+    CreateGroupRequest,
+    CreateGroupResponse,
+    DeleteGroupResponse,
     PageResponse,
-    AddWordAutoTranslate
+    UpdateGroupRequest,
+    UpdateGroupResponse,
+    UpdateWordRequest,
+    WordDetails,
+    WordDto,
+    WordsGroupResponse,
+    WordsResponse,
+    DeleteWordFromGroupDtoResponse
 } from '../models/models';
 
 export const getAllWords = (page = 0, size = 10) => {
@@ -33,4 +41,40 @@ export const updateWord = (id: number, data: UpdateWordRequest) => {
 
 export const getDetailsWord = (id: number) => {
     return apiClient.get<WordDetails>(`/words/${id}/details`);
+};
+
+export const createGroups = (data: CreateGroupRequest) => {
+    return apiClient.post<CreateGroupResponse>("/groups", data);
+};
+
+export const getAllGroups = () => {
+    return apiClient.get<AllGroupsResponse>("/groups");
+};
+
+export const deleteGroup = (groupId: number) => {
+    return apiClient.delete<DeleteGroupResponse>(`/groups/${groupId}`);
+};
+
+export const updateGroup = (groupId: number, data: UpdateGroupRequest) => {
+    return apiClient.put<UpdateGroupResponse>(`/groups/${groupId}`, data);
+};
+
+export const getGroupById = (groupId: number) => {
+    return apiClient.get<WordsGroupResponse>(`/groups/${groupId}`);
+};
+
+export const addWordsToGroup = (groupId: number, wordIds: number[]) => {
+    return apiClient.post(`/groups/${groupId}/add/words`, {wordIds});
+};
+
+export const getAvailableWords = (groupId: number) => {
+    return apiClient.get<WordsResponse>(`/words/${groupId}/available`);
+};
+
+export const addWordToGroup = (groupId: number, wordId: number) => {
+    return apiClient.post(`/words/groups/${groupId}/words/${wordId}`);
+};
+
+export const deleteWordFromGroup = (groupId: number, wordId: number) => {
+    return apiClient.delete<DeleteWordFromGroupDtoResponse>(`/groups/${groupId}/word/${wordId}`);
 };

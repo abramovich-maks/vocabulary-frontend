@@ -13,6 +13,8 @@ import AddWordPage from "./pages/AddWord/AddWordPage";
 import DailyTestPage from "./pages/DailyTest/DailyTestPage";
 import DailyTestResultPage from "./pages/DailyTest/DailyTestResultPage";
 import PrivateRoute from "./components/PrivateRoute";
+import GroupsPage from "./pages/Group/GroupsPage";
+import GroupWordsPage from "./pages/Group/GroupWordsPage";
 
 import {darkTheme, lightTheme} from "./Theme";
 
@@ -58,6 +60,24 @@ export default function App() {
                             element={
                                 <PrivateRoute>
                                     <AddWordPage/>
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/groups"
+                            element={
+                                <PrivateRoute>
+                                    <GroupsPage/>
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/groups/:groupId"
+                            element={
+                                <PrivateRoute>
+                                    <GroupWordsPage />
                                 </PrivateRoute>
                             }
                         />

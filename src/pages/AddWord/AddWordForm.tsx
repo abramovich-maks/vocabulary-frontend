@@ -2,24 +2,30 @@ import {useState} from "react";
 import {Field, FormAddedWord, StyledCard} from "./AddWord.styles";
 import {Button} from '../../components/Button';
 import {Input} from '../../components/Input';
+import GroupSelector from '../Group/GroupSelector';
 import {ErrorMessage} from '../../components/ErrorMessage';
 
 
 interface Props {
-    onSubmit: (word: string, translate: string) => void;
+    onSubmit: (word: string, translate: string, groupId?: number) => void;
     loading?: boolean;
     error?: string | null;
     onBack?: () => void;
     initialWord?: string;
+    groups: GroupDto[];
+    onCreateGroup: () => void;
+    initialGroupId?: number;
 }
 
-export default function AddWordForm({onSubmit, loading, onBack, initialWord = "", error}: Props) {
+export default function AddWordForm({onSubmit, loading, onBack, initialWord = "", error, groups, onCreateGroup,initialGroupId}: Props) {
     const [word, setWord] = useState(initialWord);
     const [translate, setTranslate] = useState("");
-
+    const [selectedGroupId, setSelectedGroupId] = useState<number | null>(
+        initialGroupId ?? null
+    );
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(word, translate);
+        onSubmit(word, translate, selectedGroupId ?? undefined);
     };
 
     return (
@@ -42,6 +48,14 @@ export default function AddWordForm({onSubmit, loading, onBack, initialWord = ""
                         onChange={e => setTranslate(e.target.value)}
                     />
                 </Field>
+
+                <GroupSelector
+                    groups={groups}
+                    selectedGroupId={selectedGroupId}
+                    onSelectGroup={setSelectedGroupId}
+                    onCreateGroup={onCreateGroup}
+                />
+
                 {onBack && (
                     <Button
                         type="button"

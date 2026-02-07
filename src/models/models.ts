@@ -86,3 +86,55 @@ export interface DailyTestResponseDto {
     incorrect: number;
     answers: AnswerResultDto[];
 }
+
+export interface CreateGroupResponse {
+    groupId: number,
+    groupName: string,
+    message: string
+}
+
+export interface CreateGroupRequest {
+    groupName: string
+}
+
+export interface GroupDto {
+    groupId: number;
+    groupName: string;
+}
+
+export interface GroupResponse {
+    groupId: number;
+    groupName: string;
+    countWord: number
+}
+
+export interface AllGroupsResponse {
+    groups: GroupResponse[];
+}
+
+export interface DeleteGroupResponse {
+    groupId: number,
+    groupName: string,
+    message: string
+}
+
+export interface UpdateGroupRequest {
+    newGroupName: string
+}
+export interface UpdateGroupResponse {
+    groupId: number,
+    groupName: string
+}
+export interface WordsGroupResponse {
+    userId: number;
+    groupName: string;
+    words: WordDto[];
+}
+
+export interface WordsResponse {
+    words: WordDto[];
+}
+
+export interface DeleteWordFromGroupDtoResponse {
+    message: string
+}
