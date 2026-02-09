@@ -4,7 +4,7 @@ import {Button} from '../../components/Button';
 import {Input} from '../../components/Input';
 import {ErrorMessage} from '../../components/ErrorMessage';
 import GroupSelector from '../Group/GroupSelector';
-
+import type {GroupDto} from '../../models/models';
 
 interface Props {
     onSubmit: (word: string, groupId?: number) => void;
@@ -17,12 +17,20 @@ interface Props {
     initialGroupId?: number;
 }
 
-
-export default function AddWordAutoForm({onSubmit, onSwitchToManual, loading, error, showManualOption,groups, onCreateGroup,initialGroupId}: Props) {
+export default function AddWordAutoForm({
+                                            onSubmit,
+                                            onSwitchToManual,
+                                            loading,
+                                            error,
+                                            showManualOption,
+                                            groups,
+                                            onCreateGroup,
+                                            initialGroupId
+                                        }: Props) {
     const [word, setWord] = useState("");
-    const [selectedGroupId, setSelectedGroupId] = useState<number | null>(
-        initialGroupId ?? null
-    );
+    const [selectedGroupId, setSelectedGroupId] = useState<number | null>(initialGroupId ?? null);
+    const [showGroupSelector, setShowGroupSelector] = useState(false);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onSubmit(word, selectedGroupId ?? undefined);
@@ -38,16 +46,34 @@ export default function AddWordAutoForm({onSubmit, onSwitchToManual, loading, er
                     <Input
                         value={word}
                         onChange={e => setWord(e.target.value)}
+                        autoFocus
                     />
                 </Field>
 
-                <GroupSelector
-                    groups={groups}
-                    selectedGroupId={selectedGroupId}
-                    onSelectGroup={setSelectedGroupId}
-                    onCreateGroup={onCreateGroup}
-                />
+                <Field>
+                    <div style={{display: "flex", alignItems: "center", gap: "8px"}}>
+                        <input
+                            type="checkbox"
+                            checked={showGroupSelector}
+                            onChange={(e) => {
+                                setShowGroupSelector(e.target.checked);
+                                if (!e.target.checked) {
+                                    setSelectedGroupId(null);
+                                }
+                            }}
+                        />
+                        Add to group (optional)
+                    </div>
+                </Field>
 
+                {showGroupSelector && (
+                    <GroupSelector
+                        groups={groups}
+                        selectedGroupId={selectedGroupId}
+                        onSelectGroup={setSelectedGroupId}
+                        onCreateGroup={onCreateGroup}
+                    />
+                )}
                 <Button type="submit" disabled={loading}>
                     {loading ? "Adding..." : "Add word"}
                 </Button>
@@ -58,7 +84,8 @@ export default function AddWordAutoForm({onSubmit, onSwitchToManual, loading, er
                         {showManualOption && (
                             <Button
                                 type="button"
-                                onClick={onSwitchToManual}>
+                                onClick={onSwitchToManual}
+                            >
                                 Add manually
                             </Button>
                         )}

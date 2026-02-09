@@ -2,12 +2,7 @@ import {useState} from "react";
 import {Button} from '../../components/Button';
 import {Input} from '../../components/Input';
 import {ErrorMessage} from '../../components/ErrorMessage';
-import {
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    InputWrapper
-} from './Groups.styles';
+import {ModalOverlay, ModalCard} from './Groups.styles';
 
 interface Props {
     onSubmit: (groupName: string) => void;
@@ -28,29 +23,31 @@ export default function CreateGroupModal({onSubmit, onClose, loading, error}: Pr
 
     return (
         <ModalOverlay onClick={onClose}>
-            <ModalContent onClick={(e) => e.stopPropagation()}>
-                <ModalHeader>
-                    <h2>Create new group</h2>
-                </ModalHeader>
+            <ModalCard onClick={(e) => e.stopPropagation()}>
+                <h3>Create New Group</h3>
 
                 <form onSubmit={handleSubmit}>
-                    <InputWrapper>
+                    <div style={{marginBottom: '16px'}}>
                         <Input
                             placeholder="Group name"
                             value={groupName}
                             onChange={e => setGroupName(e.target.value)}
                             autoFocus
                         />
-                    </InputWrapper>
+                    </div>
 
-                    <Button type="submit" disabled={loading || !groupName.trim()}>
-                        {loading ? "Creating..." : "Create group"}
-                    </Button>
-                    <Button onClick={onClose}>Close</Button>
+                    <div style={{display: 'flex', gap: '10px'}}>
+                        <Button type="submit" disabled={loading || !groupName.trim()}>
+                            {loading ? "Creating..." : "Create"}
+                        </Button>
+                        <Button type="button" onClick={onClose}>
+                            Cancel
+                        </Button>
+                    </div>
 
-                    {error && <ErrorMessage>{error}</ErrorMessage>}
+                    {error && <ErrorMessage style={{marginTop: '12px'}}>{error}</ErrorMessage>}
                 </form>
-            </ModalContent>
+            </ModalCard>
         </ModalOverlay>
     );
 }

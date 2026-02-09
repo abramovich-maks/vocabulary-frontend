@@ -1,98 +1,155 @@
 import styled from "styled-components";
 
+export const PageWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+`;
+
 export const HeroBanner = styled.div`
-    padding: 3rem 1rem;
+    width: 100%;
+    max-width: 900px;
+    padding: 3rem 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    background-color: ${({theme}) => theme.background};
+    text-align: center;
 
-    @media (min-width: 1024px) {
-        padding: 6rem 0;
-    }
-`;
-
-export const HeroImage = styled.div`
-    position: fixed;
-    left: 25px;
-    bottom: 30px;
-    width: 100%;
-    height: 140vh;
-    z-index: -1;
-    pointer-events: none;
-    display: none;
-    @media (min-width: 1024px) {
-        display: block;
-    }
-
-    img {
-        width: 70%;
-        height: 100%;
-        object-fit: contain;
-        object-position: left bottom;
-        display: block;
-        pointer-events: none;
+    @media (min-width: 768px) {
+        padding: 4rem 0;
     }
 `;
 
 export const HeroContent = styled.div`
     h1 {
         font-size: clamp(2rem, 5vw, 3.5rem);
-        line-height: 1.2;
+        line-height: 1.3;
         margin: 0;
-        transform: translateY(-2px);
-        max-width: 25ch;
         color: ${({theme}) => theme.textPrimary};
-        text-align: center;
-    }
+        font-weight: 700;
 
-    span {
-        color: ${({ theme }) => theme.textSecondary};
-        display: inline-block;
-        transition: transform 0.2s ease;
+        span {
+            color: ${({theme}) => theme.button};
+            display: inline;
+        }
     }
 `;
 
-export const PlayLinkContainer = styled.div`
+export const ButtonContainer = styled.div`
     display: flex;
     justify-content: center;
-    gap: 1.5rem;
-    margin-top: 3rem;
+    gap: 1rem;
+    margin-top: 2.5rem;
     flex-wrap: wrap;
     width: 100%;
     max-width: 600px;
 `;
 
-export const DescriptionSection = styled.section`
-    margin: 4rem auto;
-    padding: 0 1.5rem;
-    max-width: 750px;
+export const Section = styled.section`
+    width: 100%;
+    max-width: 900px;
+    margin: 3rem auto 0;
     text-align: center;
+`;
 
+export const SectionTitle = styled.h2<{icon?: string}>`
+    font-size: 1.5rem;
+    margin: 0 0 0.75rem 0;
     color: ${({theme}) => theme.textPrimary};
-    line-height: 1.6;
+    font-weight: 600;
 
-    h2 {
-        font-size: 1.8rem;
-        margin-bottom: 1.5rem;
-        color: ${({theme}) => theme.textSecondary};
+    &::before {
+        content: '${props => props.icon || '🔹'}';
+        margin-right: 0.5rem;
     }
+`;
 
-    ol {
-        display: inline-block;
-        text-align: left;
-        margin: 2rem auto 0;
-        padding-left: 1.5rem;
+export const SectionDescription = styled.p`
+    font-size: 1.1rem;
+    color: ${({theme}) => theme.textSecondary};
+    line-height: 1.7;
+    margin: 0 0 2rem 0;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+`;
 
-        li {
-            margin-bottom: 0.75rem;
+export const FeaturesGrid = styled.div`
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    
+    @media (min-width: 768px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+`;
 
-            &::marker {
-                color: ${({theme}) => theme.textSecondary};
-                font-weight: bold;
-            }
+export const FeatureCard = styled.div`
+    padding: 2rem;
+    background: ${({theme}) => theme.card};
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    h3 {
+        margin: 0 0 0.75rem 0;
+        font-size: 1.25rem;
+        color: ${({theme}) => theme.textPrimary};
+        font-weight: 600;
+    }
+    
+    p {
+        margin: 0;
+        font-size: 1rem;
+        color: ${({theme}) => theme.textSecondary};
+        line-height: 1.6;
+    }
+`;
+
+export const ComingSoonList = styled.ul`
+    list-style: none;
+    padding: 0;
+    margin: 2rem auto 0;
+    max-width: 600px;
+    text-align: left;
+    
+    li {
+        padding: 1rem 1.5rem;
+        margin-bottom: 0.75rem;
+        background: ${({theme}) => theme.card};
+        border-radius: 8px;
+        color: ${({theme}) => theme.textPrimary};
+        font-size: 1rem;
+        line-height: 1.6;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        
+        &:last-child {
+            margin-bottom: 0;
+        }
+        
+        &::before {
+            content: '✨ ';
+            margin-right: 0.5rem;
         }
     }
+`;
+
+export const TagLine = styled.p`
+    font-size: 1.15rem;
+    color: ${({theme}) => theme.textSecondary};
+    margin: 2.5rem 0 0 0;
+    font-style: italic;
+    font-weight: 500;
 `;

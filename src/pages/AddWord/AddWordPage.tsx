@@ -1,14 +1,18 @@
-import {useState, useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {addWord, addWordAutoTranslate, getAllGroups, createGroups} from "../../composables/dictionaryApi";
+import {
+    addWord,
+    addWordAutoTranslate,
+    addWordToGroup,
+    createGroups,
+    getAllGroups
+} from "../../composables/dictionaryApi";
 import AddWordForm from "./AddWordForm";
 import AddWordAutoForm from "./AddWordAutoForm";
-import CreateGroupModal from "../Group/Creategroupmodal";
+import CreateGroupModal from "../Group/CreateGroupModal";
 import axios from "axios";
-import {PageCenter} from '../../components/PageCentr';
-import type {GroupDto} from '../../models/models';
-import { addWordToGroup } from "../../composables/dictionaryApi";
-
+import {PageContainer} from './AddWord.styles';
+import type {GroupResponse} from '../../models/models';
 
 export default function AddWordPage() {
     const navigate = useNavigate();
@@ -18,7 +22,6 @@ export default function AddWordPage() {
     const [currentWord, setCurrentWord] = useState("");
 
     const [groups, setGroups] = useState<GroupResponse[]>([]);
-    const [groupsLoading, setGroupsLoading] = useState(true);
     const [showGroupModal, setShowGroupModal] = useState(false);
     const [groupError, setGroupError] = useState<string | null>(null);
     const [groupLoading, setGroupLoading] = useState(false);
@@ -29,13 +32,10 @@ export default function AddWordPage() {
 
     const loadGroups = async () => {
         try {
-            setGroupsLoading(true);
             const response = await getAllGroups();
             setGroups(response.data.groups);
         } catch (err) {
             console.error("Failed to load groups:", err);
-        } finally {
-            setGroupsLoading(false);
         }
     };
 
@@ -48,7 +48,8 @@ export default function AddWordPage() {
 
             setGroups(prev => [...prev, {
                 groupId: response.data.groupId,
-                groupName: response.data.groupName
+                groupName: response.data.groupName,
+                countWord: 0
             }]);
 
             setShowGroupModal(false);
@@ -63,23 +64,26 @@ export default function AddWordPage() {
         }
     };
 
-
     const handleAutoAdd = async (word: string, groupId?: number) => {
-        if (!word) {
+        if (!word.trim()) {
             setAddError("Please enter a word");
             return;
         }
+
         try {
             setAddLoading(true);
             setAddError(null);
             setCurrentWord(word);
 
-            const response = await addWordAutoTranslate({ word });
+            const response = await addWordAutoTranslate({word: word.trim()});
             const createdWord = response.data;
+
             if (groupId) {
                 await addWordToGroup(groupId, createdWord.id);
+                navigate(`/groups/${groupId}`);
+            } else {
+                navigate('/words');
             }
-            navigate(`/groups/${groupId}`);
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 setAddError(err.response?.data?.message ?? "Failed to add word");
@@ -92,20 +96,27 @@ export default function AddWordPage() {
     };
 
     const handleAddWord = async (word: string, translate: string, groupId?: number) => {
-        if (!word || !translate) {
+        if (!word.trim() || !translate.trim()) {
             setAddError("Both fields are required");
             return;
         }
+
         try {
             setAddLoading(true);
             setAddError(null);
 
-            const response = await addWord({word, translate});
+            const response = await addWord({
+                word: word.trim(),
+                translate: translate.trim()
+            });
             const createdWord = response.data;
+
             if (groupId) {
                 await addWordToGroup(groupId, createdWord.id);
+                navigate(`/groups/${groupId}`);
+            } else {
+                navigate('/words');
             }
-            navigate(`/groups/${groupId}`);
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 setAddError(err.response?.data?.message ?? "Failed to add word");
@@ -116,7 +127,6 @@ export default function AddWordPage() {
             setAddLoading(false);
         }
     };
-
 
     const handleSwitchToManual = () => {
         setShowManualForm(true);
@@ -139,7 +149,7 @@ export default function AddWordPage() {
     };
 
     return (
-        <PageCenter>
+        <PageContainer>
             {!showManualForm ? (
                 <AddWordAutoForm
                     onSubmit={handleAutoAdd}
@@ -147,7 +157,7 @@ export default function AddWordPage() {
                     loading={addLoading}
                     error={addError}
                     showManualOption={
-                        addError?.includes("Unknown word:") ||
+                        addError?.includes("Unknown word") ||
                         addError?.includes("Failed to add word")
                     }
                     groups={groups}
@@ -172,6 +182,6 @@ export default function AddWordPage() {
                     error={groupError}
                 />
             )}
-        </PageCenter>
+        </PageContainer>
     );
 }

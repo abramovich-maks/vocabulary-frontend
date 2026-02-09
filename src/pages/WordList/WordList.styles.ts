@@ -44,12 +44,11 @@ export const TableContainer = styled.div`
 `;
 
 export const Table = styled.table`
-    width: 90%;
+    width: 60%;
     max-width: 1000px;
     border-collapse: collapse;
     background: ${({theme}) => theme.card};
     border-radius: 12px;
-    overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
     @media (max-width: 768px) {
@@ -82,7 +81,7 @@ export const Table = styled.table`
 
     td {
         padding: 12px 16px;
-        border-bottom: 1px solid ${({theme}) => theme.border};
+        border-bottom: 1px solid ${({theme}) => theme.background};
         color: ${({theme}) => theme.textPrimary};
     }
 
@@ -97,7 +96,7 @@ export const Table = styled.table`
     }
 
     tbody tr:hover {
-        background: ${({theme}) => theme.cardHover};
+        background: ${({theme}) => theme.background};
     }
 
     tbody tr:last-child td {
@@ -110,7 +109,7 @@ export const DropdownMenu = styled.div`
     top: 28px;
     right: 0;
     background: ${({theme}) => theme.card};
-    border: 1px solid ${({theme}) => theme.border};
+    border: 1px solid ${({theme}) => theme.textSecondary}33;
     border-radius: 8px;
     min-width: 120px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
@@ -264,7 +263,7 @@ export const PageContent = styled.div`
 export const DetailsCell = styled.td`
     padding: 0 !important;
     background-color: ${({theme}) => theme.background};
-    
+
     > div {
         margin: 0;
     }

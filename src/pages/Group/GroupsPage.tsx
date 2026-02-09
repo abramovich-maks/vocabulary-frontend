@@ -1,25 +1,43 @@
 import {useEffect, useState} from "react";
-import {createGroups, deleteGroup, getAllGroups, updateGroup} from "../../composables/dictionaryApi";
+import {
+    addWord,
+    addWordAutoTranslate,
+    addWordsToGroup,
+    addWordToGroup,
+    createGroups,
+    deleteGroup,
+    getAllGroups,
+    getAvailableWords,
+    updateGroup
+} from "../../composables/dictionaryApi";
 import {useAuth} from "../../composables/AuthContext";
-import {GroupItem} from "./GroupItem";
+import {GroupRow} from "./GroupRow";
 import CreateGroupModal from "./CreateGroupModal";
-import type {GroupDto} from "../../models/models";
+import GroupEditModal from "./GroupEditModal";
+import AddWordToGroupModal from "./AddWordToGroupModal";
+import AddExistingWordsModal from "./AddExistingWordsModal";
+import type {GroupResponse, WordDto} from "../../models/models";
 import {Button} from '../../components/Button';
-import {CreateGroupButton} from './Groups.styles';
-import GroupSelector from '../Group/GroupSelector';
-
-import axios from "axios";
+import {CreateGroupButton, PageContent, Table, TableContainer} from './Groups.styles';
 
 export default function GroupsPage() {
     const {isAuthenticated} = useAuth();
 
-    const [groups, setGroups] = useState<GroupDto[]>([]);
+    const [groups, setGroups] = useState<GroupResponse[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const [openId, setOpenId] = useState<number | null>(null);
+    const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [createLoading, setCreateLoading] = useState(false);
     const [createError, setCreateError] = useState<string | null>(null);
+
+    const [editingGroup, setEditingGroup] = useState<GroupResponse | null>(null);
+
+    const [selectedGroup, setSelectedGroup] = useState<GroupResponse | null>(null);
+    const [showAddWordModal, setShowAddWordModal] = useState(false);
+    const [showAddExistingModal, setShowAddExistingModal] = useState(false);
+
+    const [availableWords, setAvailableWords] = useState<WordDto[]>([]);
 
     const loadGroups = async () => {
         try {
@@ -39,106 +57,166 @@ export default function GroupsPage() {
         try {
             await deleteGroup(id);
             loadGroups();
-            setOpenId(null);
+            setOpenMenuId(null);
         } catch {
             setError("Failed to delete group");
         }
     };
 
-    const handleDeleteWordFromGroup = async (idGroup: number, idWord ) => {
-        try {
-            await handleDeleteWordFromGroup(idGroup,idWord);
-            loadGroups();
-            setOpenId(null);
-        } catch {
-            setError("Failed to delete word from group");
-        }
-    };
-
     const handleUpdate = async (id: number, groupName: string) => {
         await updateGroup(id, {
-            groupId: id,
             newGroupName: groupName
         });
         loadGroups();
     };
-
 
     const handleCreateGroup = async (groupName: string) => {
         try {
             setCreateLoading(true);
             setCreateError(null);
 
-            const response = await createGroups({groupName});
-
-            setGroups(prev => [...prev, {
-                groupId: response.data.groupId,
-                groupName: response.data.groupName
-            }]);
+            await createGroups({groupName});
+            await loadGroups();
 
             setShowCreateModal(false);
-        } catch (err) {
-            if (axios.isAxiosError(err)) {
-                setCreateError(err.response?.data?.message ?? "Failed to create group");
-            } else {
-                setCreateError("Unexpected error");
-            }
+        } catch (err: any) {
+            setCreateError(err?.response?.data?.message ?? "Failed to create group");
         } finally {
             setCreateLoading(false);
         }
     };
 
-    const handleOpenModal = () => {
-        setShowCreateModal(true);
-        setCreateError(null);
+    const loadAvailableWords = async (group: GroupResponse) => {
+        try {
+            const res = await getAvailableWords(group.groupId);
+            setAvailableWords(res.data.words);
+            setSelectedGroup(group);
+            setShowAddExistingModal(true);
+        } catch {
+            setError("Failed to load available words");
+        }
     };
 
-    const handleCloseModal = () => {
-        setShowCreateModal(false);
-        setCreateError(null);
+    const handleAddNewWord = async (word: string, translate?: string) => {
+        if (!selectedGroup) return;
+
+        try {
+            let createdWord;
+
+            if (translate) {
+                const response = await addWord({word, translate});
+                createdWord = response.data;
+            } else {
+                const response = await addWordAutoTranslate({word});
+                createdWord = response.data;
+            }
+
+            await addWordToGroup(selectedGroup.groupId, createdWord.id);
+            await loadGroups();
+            setShowAddWordModal(false);
+        } catch (err: any) {
+            throw err;
+        }
+    };
+
+    const handleAddExistingWords = async (selectedIds: number[]) => {
+        if (!selectedGroup) return;
+
+        try {
+            await addWordsToGroup(selectedGroup.groupId, selectedIds);
+            await loadGroups();
+            setShowAddExistingModal(false);
+        } catch (err) {
+            throw err;
+        }
     };
 
     if (error) return <p>{error}</p>;
 
     return (
-        <>
-            <>
-                <h2>My Groups</h2>
-            </>
+        <PageContent>
+            <h2>My Groups</h2>
 
             {groups.length === 0 ? (
                 <>
                     <p>No groups yet</p>
-                    <CreateGroupButton onClick={handleOpenModal}>
+                    <CreateGroupButton onClick={() => setShowCreateModal(true)}>
                         Create your first group
                     </CreateGroupButton>
                 </>
             ) : (
-                <Button onClick={handleOpenModal}>
-                    + Create Group
-                </Button>
-            )}
+                <>
+                    <Button onClick={() => setShowCreateModal(true)}>
+                        + Create Group
+                    </Button>
 
-            {groups.map(group => (
-                <GroupItem
-                    key={group.groupId}
-                    group={group}
-                    isOpen={openId === group.groupId}
-                    onToggle={setOpenId}
-                    onDelete={handleDelete}
-                    onUpdate={handleUpdate}
-                    onRefreshGroups={loadGroups}
-                />
-            ))}
+                    <TableContainer>
+                        <Table>
+                            <thead>
+                            <tr>
+                                <th>Group Name</th>
+                                <th>Words Count</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {groups.map(group => (
+                                <GroupRow
+                                    key={group.groupId}
+                                    group={group}
+                                    onDelete={handleDelete}
+                                    onEdit={setEditingGroup}
+                                    openMenuId={openMenuId}
+                                    setOpenMenuId={setOpenMenuId}
+                                    onAddExisting={loadAvailableWords}
+                                    onAddNew={(group) => {
+                                        setSelectedGroup(group);
+                                        setShowAddWordModal(true);
+                                    }}
+                                />
+                            ))}
+                            </tbody>
+                        </Table>
+                    </TableContainer>
+                </>
+            )}
 
             {showCreateModal && (
                 <CreateGroupModal
                     onSubmit={handleCreateGroup}
-                    onClose={handleCloseModal}
+                    onClose={() => setShowCreateModal(false)}
                     loading={createLoading}
                     error={createError}
                 />
             )}
-        </>
+
+            {editingGroup && (
+                <GroupEditModal
+                    group={editingGroup}
+                    onSave={async (groupName) => {
+                        await handleUpdate(editingGroup.groupId, groupName);
+                    }}
+                    onClose={() => setEditingGroup(null)}
+                />
+            )}
+
+            {showAddWordModal && selectedGroup && (
+                <AddWordToGroupModal
+                    groupName={selectedGroup.groupName}
+                    onSubmit={handleAddNewWord}
+                    onClose={() => setShowAddWordModal(false)}
+                />
+            )}
+
+            {showAddExistingModal && selectedGroup && (
+                <AddExistingWordsModal
+                    groupName={selectedGroup.groupName}
+                    availableWords={availableWords}
+                    onSubmit={handleAddExistingWords}
+                    onClose={() => setShowAddExistingModal(false)}
+                />
+            )}
+        </PageContent>
     );
 }

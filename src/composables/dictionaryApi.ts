@@ -14,10 +14,11 @@ import type {
     WordDto,
     WordsGroupResponse,
     WordsResponse,
-    DeleteWordFromGroupDtoResponse
+    DeleteWordFromGroupDtoResponse,
+    AllGroupsResponse
 } from '../models/models';
 
-export const getAllWords = (page = 0, size = 10) => {
+export const getAllWords = (page = 0, size = 15) => {
     return apiClient.get<PageResponse<WordDto>>("/words", {
         params: {page, size}
     });

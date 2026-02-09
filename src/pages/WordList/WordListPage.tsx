@@ -11,7 +11,6 @@ export default function WordListPage() {
 
     const [words, setWords] = useState<WordDto[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const [openId, setOpenId] = useState<number | null>(null);
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [openMenuId, setOpenMenuId] = useState<number | null>(null);
@@ -38,7 +37,6 @@ export default function WordListPage() {
     const handleDelete = async (id: number) => {
         await deleteWord(id);
         loadWords(page);
-        setOpenId(null);
     };
 
     const handleUpdate = async (id: number, word: string, translate: string) => {

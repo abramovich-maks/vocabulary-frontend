@@ -1,22 +1,18 @@
 import {useState} from "react";
-import axios from "axios";
-
 import {Input} from "../../components/Input";
 import {Button} from "../../components/Button";
 import {ErrorMessage} from "../../components/ErrorMessage";
-import type {WordDto} from "../../models/models";
-import {ModalCard, ModalOverlay} from "./WordList.styles";
+import type {GroupResponse} from "../../models/models";
+import {ModalCard, ModalOverlay} from "./Groups.styles";
 
 interface Props {
-    word: WordDto;
-    onSave: (word: string, translate: string) => Promise<void>;
+    group: GroupResponse;
+    onSave: (groupName: string) => Promise<void>;
     onClose: () => void;
 }
 
-export default function WordEditForm({word, onSave, onClose}: Props) {
-
-    const [editWord, setEditWord] = useState(word.word);
-    const [editTranslate, setEditTranslate] = useState(word.translate);
+export default function GroupEditModal({group, onSave, onClose}: Props) {
+    const [groupName, setGroupName] = useState(group.groupName);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -24,14 +20,10 @@ export default function WordEditForm({word, onSave, onClose}: Props) {
         try {
             setLoading(true);
             setError(null);
-            await onSave(editWord, editTranslate);
+            await onSave(groupName);
             onClose();
-        } catch (err) {
-            if (axios.isAxiosError(err)) {
-                setError(err.response?.data?.message ?? "Failed to update word");
-            } else {
-                setError("Failed to update word");
-            }
+        } catch (err: any) {
+            setError(err?.response?.data?.message || "Failed to add word");
         } finally {
             setLoading(false);
         }
@@ -40,21 +32,13 @@ export default function WordEditForm({word, onSave, onClose}: Props) {
     return (
         <ModalOverlay onClick={onClose}>
             <ModalCard onClick={(e) => e.stopPropagation()}>
-                <h3>Edit Word</h3>
+                <h3>Rename Group</h3>
 
                 <div style={{marginBottom: '12px'}}>
                     <Input
-                        placeholder="Word"
-                        value={editWord}
-                        onChange={e => setEditWord(e.target.value)}
-                    />
-                </div>
-
-                <div style={{marginBottom: '16px'}}>
-                    <Input
-                        placeholder="Translation"
-                        value={editTranslate}
-                        onChange={e => setEditTranslate(e.target.value)}
+                        placeholder="Group name"
+                        value={groupName}
+                        onChange={e => setGroupName(e.target.value)}
                     />
                 </div>
 
