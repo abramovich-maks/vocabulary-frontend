@@ -138,3 +138,13 @@ export interface WordsResponse {
 export interface DeleteWordFromGroupDtoResponse {
     message: string
 }
+
+export interface IrregularVerbDto {
+    baseForm: string,
+    baseTranscription: string,
+    pastSimple: string,
+    pastTranscription: string,
+    pastParticiple: string,
+    pastParticipleTranscription: string,
+    translation: string
+}

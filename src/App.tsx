@@ -15,6 +15,7 @@ import DailyTestResultPage from "./pages/DailyTest/DailyTestResultPage";
 import PrivateRoute from "./components/PrivateRoute";
 import GroupsPage from "./pages/Group/GroupsPage";
 import GroupWordsPage from "./pages/Group/GroupWordsPage";
+import IrregularVerbsPage from './pages/IrregularVerb/IrregularVerbsPage';
 
 import {darkTheme, lightTheme} from "./Theme";
 
@@ -78,6 +79,15 @@ export default function App() {
                             element={
                                 <PrivateRoute>
                                     <GroupWordsPage />
+                                </PrivateRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/verbs"
+                            element={
+                                <PrivateRoute>
+                                    <IrregularVerbsPage/>
                                 </PrivateRoute>
                             }
                         />

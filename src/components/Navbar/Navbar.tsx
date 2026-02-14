@@ -44,6 +44,7 @@ export const Navbar = ({toggleTheme, theme}: any) => {
                             ) : (
                                 <>
                                     <StyledLink to="/">Home</StyledLink>
+                                    <StyledLink to="/verbs">Irregular Verbs</StyledLink>
                                     <StyledLink to="/words">Dictionary</StyledLink>
                                     <StyledLink to="/groups">Groups</StyledLink>
                                     <StyledLink to="/daily-test">Daily test</StyledLink>
