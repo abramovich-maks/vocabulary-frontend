@@ -260,6 +260,41 @@ export const PageContent = styled.div`
     }
 `;
 
+export const SearchContainer = styled.div`
+    width: 60%;
+    max-width: 1000px;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: flex-start;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        padding: 0 1rem;
+    }
+`;
+
+export const SearchInput = styled.input`
+    padding: 0.75rem 1rem;
+    border: 1px solid ${({theme}) => theme.textSecondary}66;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: ${({theme}) => theme.card};
+    color: ${({theme}) => theme.textPrimary};
+    width: 100%;
+    max-width: 400px;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+        outline: none;
+        border-color: ${({theme}) => theme.button};
+    }
+
+    &::placeholder {
+        color: ${({theme}) => theme.textSecondary};
+        opacity: 0.6;
+    }
+`;
+
 export const DetailsCell = styled.td`
     padding: 0 !important;
     background-color: ${({theme}) => theme.background};

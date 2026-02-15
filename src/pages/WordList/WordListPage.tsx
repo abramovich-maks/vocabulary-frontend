@@ -2,7 +2,16 @@ import {useEffect, useState} from "react";
 import {deleteWord, getAllWords, updateWord} from "../../composables/dictionaryApi";
 import {useAuth} from "../../composables/AuthContext";
 import type {WordDto} from "../../models/models";
-import {PageButton, PageContent, PageInfo, PaginationRow, Table, TableContainer} from "./WordList.styles"
+import {
+    PageButton,
+    PageContent,
+    PageInfo,
+    PaginationRow,
+    SearchContainer,
+    SearchInput,
+    Table,
+    TableContainer
+} from "./WordList.styles"
 import {WordRow} from "./WordRow"
 import WordEditForm from "./WordEditForm"
 
@@ -10,6 +19,7 @@ export default function WordListPage() {
     const {isAuthenticated} = useAuth();
 
     const [words, setWords] = useState<WordDto[]>([]);
+    const [searchQuery, setSearchQuery] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
@@ -44,41 +54,67 @@ export default function WordListPage() {
         loadWords(page);
     };
 
+    // Filter words based on search query
+    const filteredWords = words.filter(word => {
+        const query = searchQuery.toLowerCase();
+        return (
+            word.word.toLowerCase().includes(query) ||
+            word.translate.toLowerCase().includes(query)
+        );
+    });
+
     if (error) return <p>{error}</p>;
 
     return (
         <PageContent>
             <h2>My Dictionary</h2>
 
-            {words.length === 0 && <p>No words yet</p>}
-
-            <TableContainer>
-                <Table>
-                    <thead>
-                    <tr>
-                        <th>Word</th>
-                        <th>Translation</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    {words.map(word => (
-                        <WordRow
-                            key={word.id}
-                            word={word}
-                            onDelete={handleDelete}
-                            onUpdate={handleUpdate}
-                            onEdit={setEditingWord}
-                            openMenuId={openMenuId}
-                            setOpenMenuId={setOpenMenuId}
-                            openDetailsId={openDetailsId}
-                            setOpenDetailsId={setOpenDetailsId}
+            {words.length === 0 ? (
+                <p>No words yet</p>
+            ) : (
+                <>
+                    <SearchContainer>
+                        <SearchInput
+                            type="text"
+                            placeholder="Search words..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                    ))}
-                    </tbody>
-                </Table>
-            </TableContainer>
+                    </SearchContainer>
+
+                    {filteredWords.length === 0 ? (
+                        <p>No words found matching "{searchQuery}"</p>
+                    ) : (
+                        <TableContainer>
+                            <Table>
+                                <thead>
+                                <tr>
+                                    <th>Word</th>
+                                    <th>Translation</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {filteredWords.map(word => (
+                                    <WordRow
+                                        key={word.id}
+                                        word={word}
+                                        onDelete={handleDelete}
+                                        onUpdate={handleUpdate}
+                                        onEdit={setEditingWord}
+                                        openMenuId={openMenuId}
+                                        setOpenMenuId={setOpenMenuId}
+                                        openDetailsId={openDetailsId}
+                                        setOpenDetailsId={setOpenDetailsId}
+                                    />
+                                ))}
+                                </tbody>
+                            </Table>
+                        </TableContainer>
+                    )}
+                </>
+            )}
 
             {editingWord && (
                 <WordEditForm
