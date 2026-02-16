@@ -19,11 +19,16 @@ import {
     PageContent,
     SearchAndActionsBar,
     SearchInput,
+    SortableHeader,
+    SortIcon,
     Table,
     TableContainer
 } from "./Groups.styles";
 import AddWordToGroupModal from "./AddWordToGroupModal";
 import AddExistingWordsModal from "./AddExistingWordsModal";
+
+type SortField = 'word' | 'translate' | null;
+type SortDirection = 'asc' | 'desc';
 
 export default function GroupWordsPage() {
     const {groupId} = useParams();
@@ -39,6 +44,10 @@ export default function GroupWordsPage() {
     const [showAddWordModal, setShowAddWordModal] = useState(false);
     const [showAddExistingModal, setShowAddExistingModal] = useState(false);
     const [availableWords, setAvailableWords] = useState<WordDto[]>([]);
+
+    const [sortField, setSortField] = useState<SortField>(null);
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+
     const loadWords = async () => {
         try {
             const res = await getGroupById(Number(groupId));
@@ -116,6 +125,20 @@ export default function GroupWordsPage() {
         }
     };
 
+    const handleSort = (field: 'word' | 'translate') => {
+        if (sortField === field) {
+            if (sortDirection === 'asc') {
+                setSortDirection('desc');
+            } else {
+                setSortField(null);
+                setSortDirection('asc');
+            }
+        } else {
+            setSortField(field);
+            setSortDirection('asc');
+        }
+    };
+
     useEffect(() => {
         if (groupId) {
             loadWords();
@@ -129,6 +152,22 @@ export default function GroupWordsPage() {
             word.translate.toLowerCase().includes(query)
         );
     });
+
+    const sortedWords = [...filteredWords].sort((a, b) => {
+        if (!sortField) return 0;
+
+        const aValue = a[sortField].toLowerCase();
+        const bValue = b[sortField].toLowerCase();
+
+        if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    const getSortIcon = (field: 'word' | 'translate') => {
+        if (sortField !== field) return '⇅';
+        return sortDirection === 'asc' ? '↑' : '↓';
+    };
 
     if (error) return <p>{error}</p>;
 
@@ -172,14 +211,26 @@ export default function GroupWordsPage() {
                             <Table>
                                 <thead>
                                 <tr>
-                                    <th>Word</th>
-                                    <th>Translation</th>
+                                    <SortableHeader onClick={() => handleSort('word')}>
+                                        Word
+                                        <SortIcon $active={sortField === 'word'}>
+                                            {getSortIcon('word')}
+                                        </SortIcon>
+                                    </SortableHeader>
+
+                                    <SortableHeader onClick={() => handleSort('translate')}>
+                                        Translation
+                                        <SortIcon $active={sortField === 'translate'}>
+                                            {getSortIcon('translate')}
+                                        </SortIcon>
+                                    </SortableHeader>
+
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
 
                                 <tbody>
-                                {filteredWords.map(word => (
+                                {sortedWords.map(word => (
                                     <GroupWordRow
                                         key={word.id}
                                         word={word}

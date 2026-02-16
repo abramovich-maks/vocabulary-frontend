@@ -104,6 +104,23 @@ export const Table = styled.table`
     }
 `;
 
+export const SortableHeader = styled.th`
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+
+    &:hover {
+        color: ${({theme}) => theme.textPrimary};
+    }
+`;
+
+export const SortIcon = styled.span<{ $active: boolean }>`
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    opacity: ${({$active}) => $active ? '1' : '0.3'};
+    transition: opacity 0.2s ease;
+`;
+
 export const DropdownMenu = styled.div`
     position: absolute;
     top: 28px;
@@ -273,6 +290,21 @@ export const SearchContainer = styled.div`
     }
 `;
 
+export const SearchAndActionsBar = styled.div`
+    width: 60%;
+    max-width: 1000px;
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        padding: 0 1rem;
+    }
+`;
+
 export const SearchInput = styled.input`
     padding: 0.75rem 1rem;
     border: 1px solid ${({theme}) => theme.textSecondary}66;
@@ -280,7 +312,8 @@ export const SearchInput = styled.input`
     font-size: 1rem;
     background: ${({theme}) => theme.card};
     color: ${({theme}) => theme.textPrimary};
-    width: 100%;
+    flex: 1;
+    min-width: 200px;
     max-width: 400px;
     transition: border-color 0.2s ease;
 
@@ -292,6 +325,25 @@ export const SearchInput = styled.input`
     &::placeholder {
         color: ${({theme}) => theme.textSecondary};
         opacity: 0.6;
+    }
+`;
+
+export const ActionButton = styled.button`
+    padding: 0.75rem 1.25rem;
+    background: ${({theme}) => theme.button};
+    color: ${({theme}) => theme.buttonText};
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    white-space: nowrap;
+
+    &:hover {
+        background: ${({theme}) => theme.buttonHover};
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 `;
 

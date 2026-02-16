@@ -19,12 +19,12 @@ export default function AddManualWordModal({groupName, initialWord, onSubmit, on
 
     const handleWordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setWord(e.target.value);
-        setError(null); // Сбрасываем ошибку при вводе
+        setError(null);
     };
 
     const handleTranslateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTranslate(e.target.value);
-        setError(null); // Сбрасываем ошибку при вводе
+        setError(null);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {

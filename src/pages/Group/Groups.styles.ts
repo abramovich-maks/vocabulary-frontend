@@ -171,6 +171,23 @@ export const Table = styled.table`
     }
 `;
 
+export const SortableHeader = styled.th`
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    
+    &:hover {
+        color: ${({theme}) => theme.textPrimary};
+    }
+`;
+
+export const SortIcon = styled.span<{ $active: boolean }>`
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    opacity: ${({$active}) => $active ? '1' : '0.3'};
+    transition: opacity 0.2s ease;
+`;
+
 export const DropdownMenu = styled.div`
     position: absolute;
     top: 28px;

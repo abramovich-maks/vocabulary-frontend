@@ -18,10 +18,8 @@ import type {
     AllGroupsResponse
 } from '../models/models';
 
-export const getAllWords = (page = 0, size = 15) => {
-    return apiClient.get<PageResponse<WordDto>>("/words", {
-        params: {page, size}
-    });
+export const getAllWords = () => {
+    return apiClient.get<WordsResponse>("/words");
 };
 
 export const addWord = (data: AddWordRequest) => {

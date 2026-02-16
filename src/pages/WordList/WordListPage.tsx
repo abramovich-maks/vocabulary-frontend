@@ -1,40 +1,42 @@
 import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import {deleteWord, getAllWords, updateWord} from "../../composables/dictionaryApi";
 import {useAuth} from "../../composables/AuthContext";
 import type {WordDto} from "../../models/models";
 import {
-    PageButton,
+    ActionButton,
     PageContent,
-    PageInfo,
-    PaginationRow,
-    SearchContainer,
+    SearchAndActionsBar,
     SearchInput,
+    SortableHeader,
+    SortIcon,
     Table,
     TableContainer
 } from "./WordList.styles"
 import {WordRow} from "./WordRow"
 import WordEditForm from "./WordEditForm"
 
+type SortField = 'word' | 'translate' | null;
+type SortDirection = 'asc' | 'desc';
+
 export default function WordListPage() {
     const {isAuthenticated} = useAuth();
+    const navigate = useNavigate();
 
     const [words, setWords] = useState<WordDto[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [error, setError] = useState<string | null>(null);
-    const [page, setPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
     const [openMenuId, setOpenMenuId] = useState<number | null>(null);
     const [editingWord, setEditingWord] = useState<WordDto | null>(null);
     const [openDetailsId, setOpenDetailsId] = useState<number | null>(null);
 
-    const loadWords = async (pageNumber = 0) => {
+    const [sortField, setSortField] = useState<SortField>(null);
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+
+    const loadWords = async () => {
         try {
-            const res = await getAllWords(pageNumber);
-
-            setWords(res.data.content);
-            setPage(res.data.number);
-            setTotalPages(res.data.totalPages);
-
+            const res = await getAllWords();
+            setWords(res.data.words);
         } catch {
             setError("Failed to load words");
         }
@@ -46,15 +48,28 @@ export default function WordListPage() {
 
     const handleDelete = async (id: number) => {
         await deleteWord(id);
-        loadWords(page);
+        loadWords();
     };
 
     const handleUpdate = async (id: number, word: string, translate: string) => {
         await updateWord(id, {word, translate});
-        loadWords(page);
+        loadWords();
     };
 
-    // Filter words based on search query
+    const handleSort = (field: 'word' | 'translate') => {
+        if (sortField === field) {
+            if (sortDirection === 'asc') {
+                setSortDirection('desc');
+            } else {
+                setSortField(null);
+                setSortDirection('asc');
+            }
+        } else {
+            setSortField(field);
+            setSortDirection('asc');
+        }
+    };
+
     const filteredWords = words.filter(word => {
         const query = searchQuery.toLowerCase();
         return (
@@ -62,6 +77,22 @@ export default function WordListPage() {
             word.translate.toLowerCase().includes(query)
         );
     });
+
+    const sortedWords = [...filteredWords].sort((a, b) => {
+        if (!sortField) return 0;
+
+        const aValue = a[sortField].toLowerCase();
+        const bValue = b[sortField].toLowerCase();
+
+        if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    const getSortIcon = (field: 'word' | 'translate') => {
+        if (sortField !== field) return '⇅';
+        return sortDirection === 'asc' ? '↑' : '↓';
+    };
 
     if (error) return <p>{error}</p>;
 
@@ -73,14 +104,17 @@ export default function WordListPage() {
                 <p>No words yet</p>
             ) : (
                 <>
-                    <SearchContainer>
+                    <SearchAndActionsBar>
                         <SearchInput
                             type="text"
                             placeholder="Search words..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                    </SearchContainer>
+                        <ActionButton onClick={() => navigate('/words/add')}>
+                            + Add new word
+                        </ActionButton>
+                    </SearchAndActionsBar>
 
                     {filteredWords.length === 0 ? (
                         <p>No words found matching "{searchQuery}"</p>
@@ -89,14 +123,26 @@ export default function WordListPage() {
                             <Table>
                                 <thead>
                                 <tr>
-                                    <th>Word</th>
-                                    <th>Translation</th>
+                                    <SortableHeader onClick={() => handleSort('word')}>
+                                        Word
+                                        <SortIcon $active={sortField === 'word'}>
+                                            {getSortIcon('word')}
+                                        </SortIcon>
+                                    </SortableHeader>
+
+                                    <SortableHeader onClick={() => handleSort('translate')}>
+                                        Translation
+                                        <SortIcon $active={sortField === 'translate'}>
+                                            {getSortIcon('translate')}
+                                        </SortIcon>
+                                    </SortableHeader>
+
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
 
                                 <tbody>
-                                {filteredWords.map(word => (
+                                {sortedWords.map(word => (
                                     <WordRow
                                         key={word.id}
                                         word={word}
@@ -125,27 +171,6 @@ export default function WordListPage() {
                     onClose={() => setEditingWord(null)}
                 />
             )}
-
-            <PaginationRow>
-                <PageButton
-                    disabled={page === 0}
-                    onClick={() => loadWords(page - 1)}
-                >
-                    Prev
-                </PageButton>
-
-                <PageInfo>
-                    Page {page + 1} / {totalPages}
-                </PageInfo>
-
-                <PageButton
-                    disabled={page + 1 >= totalPages}
-                    onClick={() => loadWords(page + 1)}
-                >
-                    Next
-                </PageButton>
-            </PaginationRow>
-
         </PageContent>
     );
 }
