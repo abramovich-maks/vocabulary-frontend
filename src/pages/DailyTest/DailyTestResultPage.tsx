@@ -4,15 +4,15 @@ import {getResult} from "../../composables/dailyTestApi";
 import type {DailyTestResponseDto} from "../../models/models";
 import {Button} from "../../components/Button";
 import {
-    CorrectText,
+    AnswerCell,
+    ButtonContainer,
     ResultItem,
-    ResultList,
     ResultRow,
     ResultSummary,
-    StatusIcon,
+    ResultTable,
+    TableContainer,
     TestContainer,
-    TextContainer,
-    UserAnswer
+    WordCell
 } from "./DailyTest.styles";
 import {useNavigate} from "react-router-dom";
 
@@ -62,30 +62,39 @@ export default function DailyTestResultPage() {
                 </ResultItem>
             </ResultSummary>
 
-            <ResultList>
-                {result.answers.map(answer => (
-                    <ResultRow key={answer.questionId} $correct={answer.correct}>
+            <TableContainer>
+                <ResultTable>
+                    <thead>
+                    <tr>
+                        <th>Word</th>
+                        <th>Your Answer</th>
+                        <th>Correct Answer</th>
+                    </tr>
+                    </thead>
 
-                        <TextContainer>
-                            <CorrectText>{answer.word} → {answer.correctAnswer}</CorrectText>
-                            {!answer.correct && (
-                                <UserAnswer>
-                                    your answer: {answer.userAnswer}
-                                </UserAnswer>
-                            )}
-                        </TextContainer>
+                    <tbody>
+                    {result.answers.map(answer => (
+                        <ResultRow key={answer.questionId} $correct={answer.correct}>
+                            <WordCell>{answer.word}</WordCell>
 
-                        <StatusIcon>
-                            {answer.correct ? "✅" : "❌"}
-                        </StatusIcon>
+                            <AnswerCell>
+                                {answer.userAnswer}
+                            </AnswerCell>
 
-                    </ResultRow>
-                ))}
-            </ResultList>
+                            <AnswerCell>
+                                {answer.correctAnswer}
+                            </AnswerCell>
+                        </ResultRow>
+                    ))}
+                    </tbody>
+                </ResultTable>
+            </TableContainer>
 
-            <Button onClick={() => navigate("/", {replace: true})}>
-                Back to Home
-            </Button>
+            <ButtonContainer>
+                <Button onClick={() => navigate("/", {replace: true})}>
+                    Back to Home
+                </Button>
+            </ButtonContainer>
         </TestContainer>
     );
 }
