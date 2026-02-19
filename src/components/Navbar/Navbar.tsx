@@ -48,7 +48,6 @@ export const Navbar = ({toggleTheme, theme}: any) => {
                                     <StyledLink to="/words">Dictionary</StyledLink>
                                     <StyledLink to="/groups">Groups</StyledLink>
                                     <StyledLink to="/daily-test">Daily test</StyledLink>
-                                    <StyledLink to="/words/add">Add word</StyledLink>
                                     <StyledLink to="/login" onClick={handleLogoutClick}>Logout</StyledLink>
                                 </>
                             )}

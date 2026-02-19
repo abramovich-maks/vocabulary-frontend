@@ -9,7 +9,6 @@ import HomePage from "./pages/Home/HomePage";
 import LoginPage from "./pages/Login/LoginPage";
 import RegisterPage from "./pages/Register/RegisterPage";
 import WordListPage from "./pages/WordList/WordListPage";
-import AddWordPage from "./pages/AddWord/AddWordPage";
 import DailyTestPage from "./pages/DailyTest/DailyTestPage";
 import DailyTestResultPage from "./pages/DailyTest/DailyTestResultPage";
 import PrivateRoute from "./components/PrivateRoute";
@@ -54,13 +53,6 @@ export default function App() {
                             element={
                                 <PrivateRoute>
                                     <DailyTestResultPage />
-                                </PrivateRoute>
-                            }
-                        />                        <Route
-                            path="/words/add"
-                            element={
-                                <PrivateRoute>
-                                    <AddWordPage/>
                                 </PrivateRoute>
                             }
                         />

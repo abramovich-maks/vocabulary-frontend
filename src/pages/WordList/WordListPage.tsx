@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {deleteWord, getAllWords, updateWord} from "../../composables/dictionaryApi";
+import {addWord, addWordAutoTranslate, deleteWord, getAllWords, updateWord} from "../../composables/dictionaryApi";
 import {useAuth} from "../../composables/AuthContext";
 import type {WordDto} from "../../models/models";
 import {
@@ -15,13 +14,13 @@ import {
 } from "./WordList.styles"
 import {WordRow} from "./WordRow"
 import WordEditForm from "./WordEditForm"
+import AddWordModal from "./AddWordModal";
 
 type SortField = 'word' | 'translate' | null;
 type SortDirection = 'asc' | 'desc';
 
 export default function WordListPage() {
     const {isAuthenticated} = useAuth();
-    const navigate = useNavigate();
 
     const [words, setWords] = useState<WordDto[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -32,6 +31,8 @@ export default function WordListPage() {
 
     const [sortField, setSortField] = useState<SortField>(null);
     const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+
+    const [showAddWordModal, setShowAddWordModal] = useState(false);
 
     const loadWords = async () => {
         try {
@@ -54,6 +55,20 @@ export default function WordListPage() {
     const handleUpdate = async (id: number, word: string, translate: string) => {
         await updateWord(id, {word, translate});
         loadWords();
+    };
+
+    const handleAddWord = async (word: string, translate?: string) => {
+        try {
+            if (translate) {
+                await addWord({word, translate});
+            } else {
+                await addWordAutoTranslate({word});
+            }
+
+            await loadWords();
+        } catch (err: any) {
+            throw err;
+        }
     };
 
     const handleSort = (field: 'word' | 'translate') => {
@@ -111,7 +126,7 @@ export default function WordListPage() {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                        <ActionButton onClick={() => navigate('/words/add')}>
+                        <ActionButton onClick={() => setShowAddWordModal(true)}>
                             + Add new word
                         </ActionButton>
                     </SearchAndActionsBar>
@@ -169,6 +184,13 @@ export default function WordListPage() {
                         await handleUpdate(editingWord.id, wordText, translate);
                     }}
                     onClose={() => setEditingWord(null)}
+                />
+            )}
+
+            {showAddWordModal && (
+                <AddWordModal
+                    onSubmit={handleAddWord}
+                    onClose={() => setShowAddWordModal(false)}
                 />
             )}
         </PageContent>
